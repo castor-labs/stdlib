@@ -1,0 +1,51 @@
+{
+    "name":  "castor",
+    "namespace" : "Castor\\",
+    "projects": [
+        {
+            "name": "functions",
+            "description": "PHP functions wrapper that is safe, consistent, and namespaced",
+            "version": "0.1.0"
+        },
+        {
+            "name": "context",
+            "description": "Context abstraction for your PHP projects",
+            "version": "0.1.0"
+        },
+        {
+            "name": "uri",
+            "description": "Uri value object for PHP applications",
+            "version": "0.1.0"
+        },
+        {
+            "name": "io",
+            "description": "Input and Output abstractions for your PHP projects",
+            "version": "0.1.0"
+        },
+        {
+            "name": "http",
+            "description": "An abstraction over the HTTP protocol with no infrastructure implementation",
+            "version": "0.1.0"
+        },
+        {
+            "name": "http-client",
+            "description": "HTTP client infrastructure implemented in Curl and native Streams",
+            "version": "0.1.0"
+        },
+        {
+            "name": "http-cgi-server",
+            "description": "HTTP server infrastructure for CGI powered applications",
+            "version": "0.1.0"
+        },
+        {
+            "name": "os-fs",
+            "description": "Local filesystem abstraction for PHP applications",
+            "version": "0.1.0"
+        },
+        {
+            "name": "os-dio-fs",
+            "description": "Filesystem implementation using unbuffered direct IO",
+            "version": "0.1.0"
+        }
+    ]
+}
