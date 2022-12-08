@@ -18,7 +18,6 @@ namespace Castor\Net\Http;
 
 use Castor\Io\Closer;
 use Castor\Io\EndOfFile;
-use Castor\Io\ReadCloser;
 use Castor\Io\Reader;
 
 /**

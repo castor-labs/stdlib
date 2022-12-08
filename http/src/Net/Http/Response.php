@@ -29,13 +29,6 @@ class Response implements WriterTo
     public Headers $headers;
     public Reader&Closer $body;
 
-    /*hh
-     *
-     * @param Version $version
-     * @param Status $status
-     * @param Headers $headers
-     * @param ReadCloser $body
-     */
     protected function __construct(Version $version, Status $status, Headers $headers, Reader&Closer $body)
     {
         $this->version = $version;

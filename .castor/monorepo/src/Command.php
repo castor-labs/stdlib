@@ -6,7 +6,6 @@ use Composer\Script\Event;
 use JsonException;
 use RuntimeException;
 
-
 class Command
 {
     /**

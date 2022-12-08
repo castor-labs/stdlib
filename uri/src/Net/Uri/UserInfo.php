@@ -19,8 +19,8 @@ namespace Castor\Net\Uri;
 class UserInfo
 {
     public function __construct(
-        private string $user = '',
-        private ?string $pass = null,
+        private readonly string $user = '',
+        private readonly ?string $pass = null,
     ) {
     }
 
@@ -33,10 +33,10 @@ class UserInfo
     {
         $i = strpos($string, ':');
         if (!is_int($i)) {
-            return UserInfo::create($string);
+            return self::create($string);
         }
 
-        return UserInfo::create(
+        return self::create(
             substr($string, 0, $i),
             substr($string, $i + 1),
         );
