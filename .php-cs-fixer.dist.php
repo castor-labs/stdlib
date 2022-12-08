@@ -12,7 +12,15 @@ For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 EOF;
 
+$cacheFile = '.castor/var/cache/php-cs-fixer';
+$cacheDir = dirname($cacheFile);
+
+if (!is_dir($cacheDir) && !mkdir($cacheDir, 0755, true) && !is_dir($cacheDir)) {
+    throw new RuntimeException("Could not create directory: $cacheDir");
+}
+
 return (new PhpCsFixer\Config())
+    ->setCacheFile($cacheFile)
     ->setRiskyAllowed(true)
     ->setRules([
         '@PhpCsFixer' => true,
