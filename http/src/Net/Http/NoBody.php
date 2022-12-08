@@ -48,6 +48,8 @@ final class NoBody implements Reader, Closer
             throw new EndOfFile('End of file reached');
         }
 
+        $this->read = true;
+
         return '';
     }
 }

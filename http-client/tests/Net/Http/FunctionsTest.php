@@ -17,15 +17,21 @@ declare(strict_types=1);
 namespace Castor\Net\Http;
 
 use Castor\Context;
-use Castor\Net\Uri\ParseError;
+use Castor\Io;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @throws ParseError     if there is an error parsing the Uri
- * @throws TransportError
+ * @internal
+ *
+ * @coversNothing
  */
-function get(Context $ctx, string $uri): Response
+class FunctionsTest extends TestCase
 {
-    $request = Request::create(Method::GET->value, $uri);
+    public function testGet(): void
+    {
+        $response = get(Context\nil(), 'https://gpg.mnavarro.dev');
+        $hash = md5(Io\readAll($response->body));
 
-    return Client::default()->send($ctx, $request);
+        $this->assertSame('1fa0fd2d1bc0ac9b9b60a60a86a318ec', $hash);
+    }
 }
