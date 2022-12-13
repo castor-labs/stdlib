@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Castor\Net\Http\Cgi;
 
-use Castor\Arr;
 use Castor\Context;
 use Castor\Err;
 use Castor\Io\Error;
@@ -82,7 +81,7 @@ function serve(Context $ctx, Handler $handler, LoggerInterface $logger = null, b
  */
 function getParsedBody(Context $ctx): array
 {
-    return $ctx->value(PARSED_BODY_KEY) ?? [];
+    return $ctx->value(CTX_PARSED_BODY) ?? [];
 }
 
 /**
@@ -92,7 +91,7 @@ function getParsedBody(Context $ctx): array
  */
 function getUploadedFiles(Context $ctx): array
 {
-    return $ctx->value(UPLOADED_FILES_KEY) ?? [];
+    return $ctx->value(CTX_UPLOADED_FILES) ?? [];
 }
 
 /**
@@ -102,23 +101,23 @@ function getUploadedFiles(Context $ctx): array
  */
 function getParsedCookies(Context $ctx): array
 {
-    return $ctx->value(PARSED_COOKIES_KEY) ?? [];
+    return $ctx->value(CTX_PARSED_COOKIES) ?? [];
 }
 
 /**
  * @internal
  */
-const UPLOADED_FILES_KEY = 'http.cgi.uploaded_files';
+const CTX_UPLOADED_FILES = 'http.cgi.uploaded_files';
 
 /**
  * @internal
  */
-const PARSED_BODY_KEY = 'http.cgi.parsed_body';
+const CTX_PARSED_BODY = 'http.cgi.parsed_body';
 
 /**
  * @internal
  */
-const PARSED_COOKIES_KEY = 'http.cgi.parsed_cookies';
+const CTX_PARSED_COOKIES = 'http.cgi.parsed_cookies';
 
 /**
  * Parses the Request from the globals.
@@ -140,13 +139,11 @@ function parseRequest(Context &$ctx): Request
     if (Method::POST === $method) {
         $contentType = $headers->get('Content-Type');
         if (in_array(explode(';', $contentType), ['application/x-www-form-urlencoded', 'multipart/form-data'])) {
-            $ctx = Context\withValue($ctx, PARSED_BODY_KEY, $_POST);
+            $ctx = Context\withValue($ctx, CTX_PARSED_BODY, $_POST);
         }
     }
 
-    $ctx = Context\withValue($ctx, PARSED_COOKIES_KEY, Arr\map($_COOKIE, static function (string $value, string $key) {
-        return new Cookie($key, $value);
-    }));
+    $ctx = Context\withValue($ctx, CTX_PARSED_COOKIES, parseCookies($_COOKIE));
 
     $uri = parseUri($server);
     $version = Version::from($server['SERVER_PROTOCOL'] ?? 'HTTP/1.1');
@@ -191,7 +188,7 @@ function parseHeaders(array $server = []): Headers
  *
  * @internal
  */
-function parseUri(array $server = []): Uri
+function parseUri(array $server = null): Uri
 {
     $server = $server ?? $_SERVER;
 
@@ -231,4 +228,23 @@ function parseUri(array $server = []): Uri
     }
 
     return $uri;
+}
+
+/**
+ * @param null|array<string,string> $cookies
+ *
+ * @return Cookie[]
+ *
+ * @internal
+ */
+function parseCookies(array $cookies = null): array
+{
+    $cookies = $cookies ?? $_COOKIE;
+    $parsed = [];
+
+    foreach ($cookies as $key => $value) {
+        $parsed[] = new Cookie($key, $value);
+    }
+
+    return $parsed;
 }
