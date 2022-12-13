@@ -21,8 +21,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  *
- * @covers \Castor\Io\MemoryStream
- * @covers \Castor\Io\PhpStream
+ * @covers \Castor\Io\PhpResource
+ * @covers \Castor\Io\Stream
  */
 class MemoryStreamTest extends TestCase
 {
@@ -31,7 +31,7 @@ class MemoryStreamTest extends TestCase
      */
     public function testReading(): void
     {
-        $buffer = MemoryStream::from('hello world');
+        $buffer = Stream::memory('hello world');
         $read = $buffer->read(1024);
         $this->assertSame('hello world', $read);
         $this->expectException(EndOfFile::class);

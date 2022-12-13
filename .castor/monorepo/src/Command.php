@@ -6,6 +6,21 @@ use Composer\Script\Event;
 use JsonException;
 use RuntimeException;
 
+/**
+ * TODO:
+ *  - SyncProjects properly
+ *  - Generate composer.json
+ *      - Check dependencies from each package
+ *      - Resolve versions
+ *  - Create Sub Splits
+ *  - Create Origins
+ *  - Put Repositories
+ *      - Create on Github
+ *      - Description
+ *      - Tags
+ *  - Create Release
+ *      - If tag does not exist, we create it
+ */
 class Command
 {
     /**
@@ -18,7 +33,7 @@ class Command
     {
         $event->getIO()->write('Syncing workspaces.json to composer autoload...');
 
-        $contents = \file_get_contents('workspaces.json');
+        $contents = \file_get_contents('projects.json');
         $workspace = json_decode($contents, true);
 
         $namespace = $workspace['namespace'] ?? '';

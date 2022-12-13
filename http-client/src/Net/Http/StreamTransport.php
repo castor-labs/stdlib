@@ -87,7 +87,7 @@ final class StreamTransport implements Transport
         // Pick the last response and put the body there.
         $response = $responses[count($responses) - 1];
 
-        $response->body = StreamBody::from($resource);
+        $response->body = PhpResourceBody::from($resource);
 
         return $response;
     }

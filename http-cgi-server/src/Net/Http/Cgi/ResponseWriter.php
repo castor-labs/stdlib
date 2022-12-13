@@ -27,7 +27,7 @@ use Castor\Net\Http\ResponseWriter as IResponseWriter;
  *
  * @internal
  */
-final class ResponseWriter extends Io\PhpStream implements IResponseWriter
+final class ResponseWriter extends Io\PhpResource implements IResponseWriter
 {
     private Headers $headers;
     private bool $sentHeaders;

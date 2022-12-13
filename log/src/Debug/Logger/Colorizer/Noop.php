@@ -14,21 +14,15 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Net\Http;
+namespace Castor\Debug\Logger\Colorizer;
 
-use Castor\Io;
+use Castor\Debug\Logger\Colorizer;
+use Castor\Debug\Logger\Level;
 
-/**
- * Represents the Response Body.
- *
- * It is used internally by he StreamTransport
- *
- * @internal
- */
-final class StreamBody extends Io\PhpStream
+class Noop implements Colorizer
 {
-    public static function from($resource): StreamBody
+    public function colorize(Level $level, string $text): string
     {
-        return self::make($resource);
+        return $text;
     }
 }

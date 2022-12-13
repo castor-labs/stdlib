@@ -51,6 +51,11 @@ function replace(string $string, string $search, string $replace): string
     return \str_replace($search, $replace, $string);
 }
 
+/**
+ * Returns the index where the first occurrence of a substring starts.
+ *
+ * Returns -1 if the substring is not found
+ */
 function index(string $string, string $substring): int
 {
     $pos = \strpos($string, $substring);
@@ -67,9 +72,11 @@ function trim(string $string, string $chars = TRIM_CHARS): string
 }
 
 /**
+ * Splits a string into parts by the separator.
+ *
  * @return string[]
  */
-function split(string $string, string $separator = '', int $limit = null): array
+function split(string $string, string $separator = ' ', int $limit = null): array
 {
     if (null !== $limit) {
         return \explode($separator, $string, $limit);
@@ -78,6 +85,9 @@ function split(string $string, string $separator = '', int $limit = null): array
     return \explode($separator, $string);
 }
 
+/**
+ * Takes a slice from a string.
+ */
 function slice(string $string, int $offset, int $size = 0): string
 {
     if (0 === $size) {
@@ -97,6 +107,8 @@ function join(array $array, string $glue = ''): string
 
 /**
  * Cuts a string in two by the first occurrence of substring.
+ *
+ * The substring is not included in the result
  *
  * @return array{0: string, 1: string, 2: bool}
  */

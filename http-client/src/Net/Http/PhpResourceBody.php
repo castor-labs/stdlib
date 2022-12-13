@@ -14,21 +14,21 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Net\Http\Cgi;
+namespace Castor\Net\Http;
 
 use Castor\Io;
 
 /**
- * RequestBody wraps the PHP CGI input stream.
+ * Represents the Response Body.
  *
- * It is an implementation detail of the CGI Server
+ * It is used internally by he StreamTransport
  *
  * @internal
  */
-final class RequestBody extends Io\PhpResource
+final class PhpResourceBody extends Io\PhpResource
 {
-    public static function create(): RequestBody
+    public static function from($resource): PhpResourceBody
     {
-        return self::make(fopen('php://input', 'rb'));
+        return self::make($resource);
     }
 }

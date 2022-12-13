@@ -14,21 +14,24 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Net\Http\Cgi;
+namespace Castor\Crypto\Hash;
 
-use Castor\Io;
-
-/**
- * RequestBody wraps the PHP CGI input stream.
- *
- * It is an implementation detail of the CGI Server
- *
- * @internal
- */
-final class RequestBody extends Io\PhpResource
+function md5_hex(string $string): string
 {
-    public static function create(): RequestBody
-    {
-        return self::make(fopen('php://input', 'rb'));
-    }
+    return \md5($string);
+}
+
+function md5(string $string): string
+{
+    return \md5($string, true);
+}
+
+function sha1_hex(string $string): string
+{
+    return \sha1($string);
+}
+
+function sha1(string $string): string
+{
+    return \sha1($string, true);
 }

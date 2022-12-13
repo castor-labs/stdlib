@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Castor\Net\Http\Cgi;
 
+use Castor\Arr;
 use Castor\Context;
 use Castor\Err;
 use Castor\Io\Error;
@@ -143,7 +144,9 @@ function parseRequest(Context &$ctx): Request
         }
     }
 
-    $ctx = Context\withValue($ctx, PARSED_COOKIES_KEY, $_COOKIE);
+    $ctx = Context\withValue($ctx, PARSED_COOKIES_KEY, Arr\map($_COOKIE, static function (string $value, string $key) {
+        return new Cookie($key, $value);
+    }));
 
     $uri = parseUri($server);
     $version = Version::from($server['SERVER_PROTOCOL'] ?? 'HTTP/1.1');
@@ -173,6 +176,7 @@ function parseHeaders(array $server = []): Headers
             continue;
         }
 
+        // TODO: Evaluate if we need this on Nginx
         if (str_starts_with($key, 'CONTENT_')) {
             $name = 'content-'.Str\slice($key, 8);
             $headers->set($name, $value);

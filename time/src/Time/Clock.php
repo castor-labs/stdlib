@@ -14,21 +14,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Net\Http\Cgi;
+namespace Castor\Time;
 
-use Castor\Io;
+use Castor\Time;
 
-/**
- * RequestBody wraps the PHP CGI input stream.
- *
- * It is an implementation detail of the CGI Server
- *
- * @internal
- */
-final class RequestBody extends Io\PhpResource
+interface Clock
 {
-    public static function create(): RequestBody
-    {
-        return self::make(fopen('php://input', 'rb'));
-    }
+    public function now(): Time;
 }

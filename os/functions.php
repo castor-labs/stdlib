@@ -17,6 +17,40 @@ declare(strict_types=1);
 namespace Castor\Os;
 
 use Castor\Err;
+use Castor\Io\Flusher;
+use Castor\Io\Reader;
+use Castor\Io\Stream;
+use Castor\Io\Writer;
+
+function stderr(): Writer&Flusher
+{
+    static $stream = null;
+    if (null === $stream) {
+        $stream = Stream::create(STDERR);
+    }
+
+    return $stream;
+}
+
+function stdout(): Writer&Flusher
+{
+    static $stream = null;
+    if (null === $stream) {
+        $stream = Stream::create(STDOUT);
+    }
+
+    return $stream;
+}
+
+function stdin(): Reader
+{
+    static $stream = null;
+    if (null === $stream) {
+        $stream = Stream::create(STDIN);
+    }
+
+    return $stream;
+}
 
 function lookupEnv(string $env): ?string
 {

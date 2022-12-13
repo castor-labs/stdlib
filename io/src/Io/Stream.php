@@ -17,11 +17,9 @@ declare(strict_types=1);
 namespace Castor\Io;
 
 /**
- * Class Memory represents a read-write temporary stream.
- *
- * It uses php://memory under the hood.
+ * Class Stream represents a read-write temporary stream.
  */
-final class MemoryStream extends PhpStream
+final class Stream extends PhpResource
 {
     /**
      * Creates an in-memory buffer of bytes.
@@ -30,12 +28,33 @@ final class MemoryStream extends PhpStream
      *
      * @throws Error
      */
-    public static function from(string $string): MemoryStream
+    public static function memory(string $string = ''): Stream
     {
         $buffer = self::make(fopen('php://memory', 'w+b'));
+        if ('' === $string) {
+            return $buffer;
+        }
+
         $buffer->write($string);
         $buffer->seek(0, SEEK_START);
 
         return $buffer;
+    }
+
+    /**
+     * Creates an stream from a resource.
+     *
+     * @param mixed $resource
+     *
+     * @throws Error
+     */
+    public static function create($resource): Stream
+    {
+        return self::make($resource);
+    }
+
+    public static function open(string $filename, string $mode): Stream
+    {
+        return self::make(fopen($filename, $mode));
     }
 }

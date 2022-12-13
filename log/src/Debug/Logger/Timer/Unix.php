@@ -14,21 +14,22 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Net\Http\Cgi;
+namespace Castor\Debug\Logger\Timer;
 
-use Castor\Io;
+use Castor\Debug\Logger\Timer;
+use Castor\Time\Clock;
 
-/**
- * RequestBody wraps the PHP CGI input stream.
- *
- * It is an implementation detail of the CGI Server
- *
- * @internal
- */
-final class RequestBody extends Io\PhpResource
+final class Unix implements Timer
 {
-    public static function create(): RequestBody
+    private Clock $clock;
+
+    public function __construct(Clock $clock)
     {
-        return self::make(fopen('php://input', 'rb'));
+        $this->clock = $clock;
+    }
+
+    public function time(): string
+    {
+        return $this->clock->now()->format('U');
     }
 }

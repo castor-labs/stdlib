@@ -18,9 +18,9 @@ namespace Castor\Err;
 
 function last(): \RuntimeException
 {
-    $array = error_get_last();
+    $array = \error_get_last();
     $e = new \RuntimeException($array['message'] ?? 'Unknown Error', $array['type'] ?? 0);
-    error_clear_last();
+    \error_clear_last();
 
     return $e;
 }

@@ -14,21 +14,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Net\Http\Cgi;
+namespace Castor\Encoding\Base64\Std;
 
-use Castor\Io;
-
-/**
- * RequestBody wraps the PHP CGI input stream.
- *
- * It is an implementation detail of the CGI Server
- *
- * @internal
- */
-final class RequestBody extends Io\PhpResource
+function encode(string $string): string
 {
-    public static function create(): RequestBody
-    {
-        return self::make(fopen('php://input', 'rb'));
-    }
+    return \base64_encode($string);
 }
+
+function decode(string $base64): string
+{
+    return \base64_decode($base64);
+}
+
+namespace Castor\Encoding\Base64\Url;

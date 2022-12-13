@@ -16,14 +16,14 @@
     ],
     "autoload": {
         "psr-4": {
-            "Castor\\": ["context/src", "http-cgi-server/src", "http-client/src", "http/src", "io/src", "uri/src"]
+            "Castor\\": ["console/src", "context/src", "http-cgi-server/src", "http-client/src", "http/src", "io/src", "log/src", "os/src", "time/src", "uri/src"]
         },
-        "files": ["context/functions.php", "functions/functions.php", "http-cgi-server/functions.php", "http-client/functions.php", "io/functions.php"]
+        "files": ["context/functions.php", "functions/functions.php", "http-cgi-server/functions.php", "http-client/functions.php", "io/functions.php", "log/functions.php", "os/functions.php"]
     },
     "autoload-dev": {
         "psr-4": {
             "Castor\\Monorepo\\": [".castor/monorepo/src", ".castor/monorepo/tests"],
-            "Castor\\": ["context/tests", "functions/tests", "http-cgi-server/tests", "http-client/tests", "http/tests", "io/tests", "uri/tests"]
+            "Castor\\": ["console/tests", "context/tests", "functions/tests", "http-cgi-server/tests", "http-client/tests", "http/tests", "io/tests", "log/tests", "os/tests", "time/tests", "uri/tests"]
         }
     },
     "require": {

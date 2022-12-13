@@ -57,7 +57,7 @@ final class CurlTransport implements Transport
     public function send(Context $ctx, Request $request): Response
     {
         $handle = $this->createHandle($request);
-        $buffer = Io\MemoryStream::from('');
+        $buffer = Io\Stream::memory('');
 
         $response = $this->prepare($handle, $request, $buffer);
 
@@ -97,7 +97,7 @@ final class CurlTransport implements Transport
         return $handle;
     }
 
-    private function prepare(\CurlHandle $handle, Request $request, Io\MemoryStream $buffer): Response
+    private function prepare(\CurlHandle $handle, Request $request, Io\Stream $buffer): Response
     {
         if (\defined('CURLOPT_PROTOCOLS')) {
             curl_setopt($handle, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);

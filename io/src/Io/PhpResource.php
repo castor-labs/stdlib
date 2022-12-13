@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Castor\Io;
 
 /**
- * This class represents a PhpStream with all the possible operations in it.
+ * This class represents a PhpResource with all the possible operations in it.
  */
-abstract class PhpStream implements Reader, Writer, Seeker, Closer, ReaderAt, WriterAt, Flusher
+abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, WriterAt, Flusher
 {
     private const FLAG_SEEKABLE = 1;
     private const FLAG_READABLE = 2;

@@ -14,20 +14,22 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-const LIB = __DIR__.'/lib';
+$lib = __DIR__.'/lib';
 
-require_once LIB.'/assert.php';
+require_once $lib.'/assert.php';
 
-require_once LIB.'/err.php';
+require_once $lib.'/hash.php';
 
-require_once LIB.'/str.php';
+require_once $lib.'/base64.php';
 
-require_once LIB.'/arr.php';
+require_once $lib.'/err.php';
 
-require_once LIB.'/bytes.php';
+require_once $lib.'/str.php';
 
-require_once LIB.'/os.php';
+require_once $lib.'/arr.php';
 
-require_once LIB.'/os.path.php';
+require_once $lib.'/bytes.php';
 
-require_once LIB.'/runtime.php';
+require_once $lib.'/os.path.php';
+
+require_once $lib.'/runtime.php';

@@ -21,13 +21,13 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  *
- * @coversNothing
+ * @coversDefaultClass
  */
 class OsFunctionsTest extends TestCase
 {
     public function testOsMakeDir(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(\Exception::class);
         $this->expectErrorMessage('Permission denied');
         Os\makeDir('/usr/bin/poop');
     }

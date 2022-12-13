@@ -14,21 +14,14 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Net\Http\Cgi;
+namespace Castor\Debug;
 
-use Castor\Io;
+use Castor\Context;
 
-/**
- * RequestBody wraps the PHP CGI input stream.
- *
- * It is an implementation detail of the CGI Server
- *
- * @internal
- */
-final class RequestBody extends Io\PhpResource
+interface Logger
 {
-    public static function create(): RequestBody
-    {
-        return self::make(fopen('php://input', 'rb'));
-    }
+    /**
+     * Writes a log entry.
+     */
+    public function log(Context $ctx, string $message): void;
 }
