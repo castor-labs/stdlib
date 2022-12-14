@@ -35,6 +35,9 @@ analyze:
 test:
 	$(COMPOSE) exec $(MAIN) vendor/bin/phpunit --coverage-text
 
+bench:
+	$(COMPOSE) exec $(MAIN) vendor/bin/phpbench run --report=default
+
 # Stops all services and destroys all the containers.
 # NOTE: Named kill to convey the more accurate meaning that the containers are destroyed.
 kill:

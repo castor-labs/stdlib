@@ -16,9 +16,7 @@ declare(strict_types=1);
 
 namespace Castor\Time;
 
-use Castor\Time;
-
 interface Clock
 {
-    public function now(): Time;
+    public function now(): \DateTimeImmutable;
 }

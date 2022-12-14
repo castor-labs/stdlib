@@ -42,9 +42,9 @@ final class Stream extends PhpResource
     }
 
     /**
-     * Creates an stream from a resource.
+     * Creates a Stream from a resource.
      *
-     * @param mixed $resource
+     * @param resource $resource
      *
      * @throws Error
      */

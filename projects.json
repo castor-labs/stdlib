@@ -83,6 +83,14 @@
             }
         },
         {
+            "name": "random",
+            "description": "Random abstraction for your PHP applications",
+            "version": "0.1.0",
+            "meta": {
+                "github": "castor-labs/random"
+            }
+        },
+        {
             "name": "os",
             "description": "Operating system functions for PHP applications",
             "version": "0.1.0",

@@ -16,18 +16,22 @@ declare(strict_types=1);
 
 namespace Castor\Time\Clock;
 
-use Castor\Time;
 use Castor\Time\Clock;
 
 final class System implements Clock
 {
     private static ?System $global = null;
 
-    private string $tz;
+    private \DateTimeZone $tz;
 
-    public function __construct(string $tz = 'UTC')
+    public function __construct(\DateTimeZone $tz)
     {
         $this->tz = $tz;
+    }
+
+    public static function make(string $tz = 'UTC'): System
+    {
+        return new self(new \DateTimeZone($tz));
     }
 
     /**
@@ -38,14 +42,17 @@ final class System implements Clock
     public static function global(): System
     {
         if (null === self::$global) {
-            self::$global = new System();
+            self::$global = self::make();
         }
 
         return self::$global;
     }
 
-    public function now(): Time
+    /**
+     * @throws \Exception
+     */
+    public function now(): \DateTimeImmutable
     {
-        return Time::now($this->tz);
+        return new \DateTimeImmutable(timezone: $this->tz);
     }
 }

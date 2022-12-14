@@ -16,14 +16,14 @@
     ],
     "autoload": {
         "psr-4": {
-            "Castor\\": ["console/src", "context/src", "http-cgi-server/src", "http-client/src", "http/src", "io/src", "log/src", "os/src", "time/src", "uri/src"]
+            "Castor\\": ["console/src", "context/src", "http-cgi-server/src", "http-client/src", "http/src", "id/src", "io/src", "log/src", "os/src", "random/src", "time/src", "uri/src"]
         },
         "files": ["context/functions.php", "functions/functions.php", "http-cgi-server/functions.php", "http-client/functions.php", "io/functions.php", "log/functions.php", "os/functions.php"]
     },
     "autoload-dev": {
         "psr-4": {
             "Castor\\Monorepo\\": [".castor/monorepo/src", ".castor/monorepo/tests"],
-            "Castor\\": ["console/tests", "context/tests", "functions/tests", "http-cgi-server/tests", "http-client/tests", "http/tests", "io/tests", "log/tests", "os/tests", "time/tests", "uri/tests"]
+            "Castor\\": ["console/tests", "context/tests", "functions/tests", "http-cgi-server/tests", "http-client/tests", "http/tests", "id/tests", "io/tests", "log/tests", "os/tests", "random/tests", "time/tests", "uri/tests"]
         }
     },
     "require": {
@@ -35,7 +35,8 @@
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpunit/phpunit": "^9.5",
         "vimeo/psalm": "^5.1",
-        "composer/composer": "^2.3"
+        "composer/composer": "^2.3",
+        "phpbench/phpbench": "^1.2"
     },
     "scripts": {
         "pre-autoload-dump": "Castor\\Monorepo\\Command::syncProjects"

@@ -21,10 +21,10 @@ use Castor\Time\Clock;
 
 final class Frozen implements Clock
 {
-    private Time $start;
-    private Time $current;
+    private \DateTimeImmutable $start;
+    private \DateTimeImmutable $current;
 
-    public function __construct(Time $start)
+    public function __construct(\DateTimeImmutable $start)
     {
         $this->start = $start;
         $this->current = $start;
@@ -35,7 +35,7 @@ final class Frozen implements Clock
      */
     public static function at(string $format, string $value, string $tz = 'UTC'): Frozen
     {
-        return new self(Time::parse($format, $value, $tz));
+        return new self(\DateTimeImmutable::createFromFormat($format, $value, new \DateTimeZone($tz)));
     }
 
     public function advance(string $interval): void
@@ -43,7 +43,7 @@ final class Frozen implements Clock
         try {
             $i = new \DateInterval($interval);
         } catch (\Exception $e) {
-            throw new \RuntimeException('Wrong interval', 0, $e);
+            throw new \RuntimeException('Wrong interval', previous: $e);
         }
 
         $this->current = $this->current->add($i);
@@ -54,7 +54,7 @@ final class Frozen implements Clock
         try {
             $i = new \DateInterval($interval);
         } catch (\Exception $e) {
-            throw new \RuntimeException('Wrong interval', 0, $e);
+            throw new \RuntimeException('Wrong interval', previous: $e);
         }
 
         $this->current = $this->current->sub($i);
@@ -65,7 +65,7 @@ final class Frozen implements Clock
         $this->current = $this->start;
     }
 
-    public function now(): Time
+    public function now(): \DateTimeImmutable
     {
         return $this->current;
     }

@@ -27,10 +27,18 @@ class Client
     ) {
     }
 
+    /**
+     * Returns the default Client instance.
+     *
+     * This global instance uses the default CurlTransport.
+     *
+     * If you wish to create a Client that uses another transport, you MUST create
+     * your own instance using the constructor.
+     */
     public static function default(): Client
     {
         if (null === self::$default) {
-            self::$default = new self(StreamTransport::default());
+            self::$default = new self(CurlTransport::default());
         }
 
         return self::$default;

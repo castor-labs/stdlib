@@ -21,26 +21,38 @@ use Castor\Context;
 use Castor\Io;
 use Castor\Str;
 
+/**
+ * StreamTransport is a native PHP transport that uses `fopen` to make requests.
+ *
+ * It does not load the whole response body in memory like CurlTransport, so it is much more
+ * memory efficient. However, it is not very performant.
+ */
 final class StreamTransport implements Transport
 {
-    private static ?StreamTransport $instance = null;
+    private static ?StreamTransport $default = null;
 
     public function __construct(
         private readonly bool $followRedirects = true,
         private readonly string $proxy = '',
         private readonly int $maxRedirects = 10,
         private readonly float $timeout = -1,
-        private readonly bool $sslVerify = true,
+        private readonly TLS $tls = new TLS(),
     ) {
     }
 
+    /**
+     * Returns a global StreamTransport instance created with sensible defaults.
+     *
+     * If you need custom configuration you MUST create your own instance using the
+     * constructor.
+     */
     public static function default(): StreamTransport
     {
-        if (null === self::$instance) {
-            self::$instance = new self();
+        if (null === self::$default) {
+            self::$default = new self();
         }
 
-        return self::$instance;
+        return self::$default;
     }
 
     /**
@@ -58,9 +70,7 @@ final class StreamTransport implements Transport
                 'max_redirects' => $this->maxRedirects,
                 'protocol_version' => $request->version->toFloat(),
             ],
-            'ssl' => [
-                'verify_peer' => $this->sslVerify,
-            ],
+            'ssl' => $this->tls->toContextArray(),
         ];
 
         if ($this->timeout >= 0) {
@@ -87,7 +97,7 @@ final class StreamTransport implements Transport
         // Pick the last response and put the body there.
         $response = $responses[count($responses) - 1];
 
-        $response->body = PhpResourceBody::from($resource);
+        $response->body = Io\Stream::create($resource);
 
         return $response;
     }

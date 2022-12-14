@@ -23,9 +23,12 @@ use Castor\Io;
 use Castor\Io\NoopCloser;
 use Castor\Str;
 
+/**
+ * CurlTransport is more performant than StreamTransport, but it loads all the response in memory.
+ */
 final class CurlTransport implements Transport
 {
-    private static ?CurlTransport $instance = null;
+    private static ?CurlTransport $default = null;
 
     /**
      * @var \CurlHandle[]
@@ -47,19 +50,19 @@ final class CurlTransport implements Transport
 
     public static function default(): CurlTransport
     {
-        if (null === self::$instance) {
-            self::$instance = new self();
+        if (null === self::$default) {
+            self::$default = new self();
         }
 
-        return self::$instance;
+        return self::$default;
     }
 
     public function send(Context $ctx, Request $request): Response
     {
         $handle = $this->createHandle($request);
-        $buffer = Io\Stream::memory('');
+        $stream = Io\Stream::memory('');
 
-        $response = $this->prepare($handle, $request, $buffer);
+        $response = $this->prepare($handle, $request, $stream);
 
         $curlInfo = null;
 
@@ -78,8 +81,8 @@ final class CurlTransport implements Transport
             $response->headers->add('__curl_info', serialize($curlInfo));
         }
 
-        $buffer->seek(0, Io\SEEK_START);
-        $response->body = $buffer;
+        $stream->seek(0, Io\SEEK_START);
+        $response->body = $stream;
 
         return $response;
     }
@@ -155,8 +158,8 @@ final class CurlTransport implements Transport
             $options[CURLOPT_HTTP_VERSION] = $version;
         }
 
-        if ('' !== $request->uri->getUserInfo()) {
-            $options[CURLOPT_USERPWD] = $request->uri->getUserInfo();
+        if ('' !== $request->uri->getUserInfo()->toString()) {
+            $options[CURLOPT_USERPWD] = $request->uri->getUserInfo()->toString();
         }
 
         switch ($request->method) {

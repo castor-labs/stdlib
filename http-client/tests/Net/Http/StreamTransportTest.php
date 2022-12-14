@@ -17,23 +17,28 @@ declare(strict_types=1);
 namespace Castor\Net\Http;
 
 use Castor\Context;
-use Castor\Io;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  *
- * @covers \Castor\Net\Http\Client
- * @covers \Castor\Net\Http\StreamTransport
- * @covers \Castor\Net\Http\TLS
+ * @coversNothing
  */
-class FunctionsTest extends TestCase
+class StreamTransportTest extends TestCase
 {
-    public function testGet(): void
+    /**
+     * @throws TransportError
+     *
+     * @dataProvider provideRequests
+     */
+    public function testGet(Context $ctx, Request $request): void
     {
-        $response = get(Context\nil(), 'https://gpg.mnavarro.dev');
-        $hash = md5(Io\readAll($response->body));
+        $this->expectNotToPerformAssertions();
+        StreamTransport::default()->send($ctx, $request);
+    }
 
-        $this->assertSame('1fa0fd2d1bc0ac9b9b60a60a86a318ec', $hash);
+    public function provideRequests(): \Generator
+    {
+        yield [Context\nil(), Request::create('GET', 'https://gpg.mnavarro.dev')];
     }
 }
