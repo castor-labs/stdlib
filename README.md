@@ -9,10 +9,7 @@ To install it, simply run:
 composer require castor/stdlib
 ```
 
-Each package is also individually published in their own repo from a subtree split of this one, 
-should you need to import only a subset of this standard library.
-
-Simply require `castor/<package-name>` to add it.
+> NOTICE: Please note this is in development and there is no stable version yet.
 
 ## Why this?
 
