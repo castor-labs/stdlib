@@ -30,7 +30,7 @@ class Cookie
         public int $maxAge = 0,
         public bool $secure = false,
         public bool $httpOnly = false,
-        public SameSite $sameSite = SameSite::NONE,
+        public SameSite $sameSite = SameSite::LAX,
     ) {
     }
 
