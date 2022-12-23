@@ -21,7 +21,7 @@ function map(array $array, callable $func): array
     return \array_map($func, $array);
 }
 
-function filter(array $array, callable $func): array
+function filter(array $array, callable $func = null): array
 {
     return \array_filter($array, $func);
 }

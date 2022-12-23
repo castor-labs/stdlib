@@ -14,8 +14,15 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Net\Http;
+namespace Castor\Debug\Logger;
 
-class CookieJar
+use Castor\Context;
+use Castor\Debug\Logger;
+
+final class Noop implements Logger
 {
+    public function log(Context $ctx, string $message): void
+    {
+        // Noop
+    }
 }

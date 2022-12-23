@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Castor\Net\Http;
 
+use Castor\Arr;
+use Castor\Str;
+
 class Cookie
 {
     public function __construct(
@@ -31,44 +34,165 @@ class Cookie
     ) {
     }
 
-    /**
-     * @return Cookie[]
-     */
-    public static function all(Request $request): array
+    public function expire(): void
     {
-        return self::readCookies($request->headers->get('Cookie'));
+        $this->expires = new \DateTimeImmutable('-5 years');
     }
 
-    /**
-     * Gets a cookie from the request.
-     *
-     * If the cookie does not exist, a new instance with its name
-     * its created.
-     */
-    public static function get(Request $request, string $name): Cookie
+    public function rememberForever(): void
     {
-        return self::lookup($request, $name) ?? new Cookie($name);
-    }
-
-    /**
-     * Looks up a Cookie in the request.
-     *
-     * If the cookie does not exist, then null is returned
-     */
-    public static function lookup(Request $request, string $name): ?Cookie
-    {
-        return self::readCookies($request->headers->get('Cookie'), $name)[0] ?? null;
+        $this->expires = new \DateTimeImmutable('+5 years');
     }
 
     /**
      * @return Cookie[]
      */
-    private static function readCookies(string $value, string $filter = ''): array
+    public static function fromCookieString(string $string): array
     {
-        if ('' === $value) {
-            return [];
+        return Arr\map(self::splitOnAttrDelimiter($string), static function (string $pair) {
+            return static::fromCookiePair($pair);
+        });
+    }
+
+    public static function fromSetCookieString(string $string): Cookie
+    {
+        $rawAttributes = self::splitOnAttrDelimiter($string);
+        $rawAttribute = array_shift($rawAttributes);
+
+        if (!is_string($rawAttribute)) {
+            throw new \InvalidArgumentException(sprintf(
+                'The provided cookie string "%s" must have at least one attribute',
+                $string
+            ));
         }
 
-        return [];
+        [$name, $value] = self::splitOnAttrDelimiter($rawAttribute);
+
+        $cookie = new static($name, $value);
+
+        while ($rawAttribute = array_shift($rawAttributes)) {
+            $rawAttributePair = explode('=', $rawAttribute, 2);
+
+            $attributeKey = $rawAttributePair[0];
+            $attributeValue = count($rawAttributePair) > 1 ? $rawAttributePair[1] : null;
+
+            $attributeKey = strtolower($attributeKey);
+
+            switch ($attributeKey) {
+                case 'expires':
+                    $cookie->expires = \DateTimeImmutable::createFromFormat('D, d M Y H:i:s T', $attributeValue);
+
+                    break;
+
+                case 'max-age':
+                    $cookie->maxAge = (int) $attributeValue;
+
+                    break;
+
+                case 'domain':
+                    $cookie->domain = $attributeValue;
+
+                    break;
+
+                case 'path':
+                    $cookie->path = $attributeValue;
+
+                    break;
+
+                case 'secure':
+                    $cookie->secure = true;
+
+                    break;
+
+                case 'httponly':
+                    $cookie->httpOnly = true;
+
+                    break;
+
+                case 'samesite':
+                    $cookie->sameSite = SameSite::tryFrom((string) $attributeValue) ?? SameSite::NONE;
+
+                    break;
+            }
+        }
+
+        return $cookie;
+    }
+
+    public static function fromCookiePair(string $pair): Cookie
+    {
+        [$name, $value] = self::splitOnAttrDelimiter($pair);
+
+        return new Cookie(
+            $name,
+            $value
+        );
+    }
+
+    public function toCookieString(): string
+    {
+        return \urlencode($this->name).'='.\urlencode($this->value);
+    }
+
+    public function toSetCookieString(): string
+    {
+        $parts = [
+            urlencode($this->name).'='.urlencode($this->value),
+        ];
+
+        if ('' !== $this->domain) {
+            $parts[] = 'Domain='.$this->domain;
+        }
+
+        if ('' !== $this->path) {
+            $parts[] = 'Path='.$this->path;
+        }
+
+        if (null !== $this->expires) {
+            $date = $this->expires->setTimezone(new \DateTimeZone('UTC'))->format('D, d M Y H:i:s T');
+            $parts[] = 'Expires='.$date;
+        }
+
+        if (0 !== $this->maxAge) {
+            $parts[] = 'Max-Age='.$this->maxAge;
+        }
+
+        if ($this->secure) {
+            $parts[] = 'Secure';
+        }
+
+        if ($this->httpOnly) {
+            $parts[] = 'HttpOnly';
+        }
+
+        if ($this->sameSite) {
+            $parts[] = 'SameSite='.$this->sameSite->value;
+        }
+
+        return Str\join($parts, '; ');
+    }
+
+    /**
+     * @return string[]
+     */
+    private static function splitOnAttrDelimiter(string $string): array
+    {
+        $splitAttributes = \preg_split('@\s*[;]\s*@', $string);
+        if (!\is_array($splitAttributes)) {
+            $splitAttributes = []; // Malformed cookie header should be ignored
+        }
+
+        return Arr\filter($splitAttributes);
+    }
+
+    /**
+     * @return array{0: string, 1: string}
+     */
+    private static function splitCookiePair(string $pair): array
+    {
+        [$name, $value] = Str\cut($pair, '=');
+        $value = \urldecode($value);
+
+        return [$name, $value];
     }
 }

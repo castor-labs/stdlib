@@ -123,7 +123,7 @@ function cut(string $string, string $substring): array
 
     return [
         slice($string, 0, $i),
-        slice($string, $i, $len),
+        slice($string, $i + $len),
         true,
     ];
 }

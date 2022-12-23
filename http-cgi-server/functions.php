@@ -17,9 +17,11 @@ declare(strict_types=1);
 namespace Castor\Net\Http\Cgi;
 
 use Castor\Context;
+use Castor\Debug\Logger;
 use Castor\Err;
 use Castor\Io\Error;
 use Castor\Net\Http\Cookie;
+use Castor\Net\Http\Cookies;
 use Castor\Net\Http\Handler;
 use Castor\Net\Http\Headers;
 use Castor\Net\Http\Method;
@@ -28,8 +30,6 @@ use Castor\Net\Http\Status;
 use Castor\Net\Http\Version;
 use Castor\Net\Uri;
 use Castor\Str;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 /**
  * The serve method runs a handler in a CGI context.
@@ -42,9 +42,9 @@ use Psr\Log\NullLogger;
  *
  * @throws \Throwable
  */
-function serve(Context $ctx, Handler $handler, LoggerInterface $logger = null, bool $catchErrors = false): void
+function serve(Context $ctx, Handler $handler, Logger $logger = null, bool $catchErrors = false): void
 {
-    $logger = $logger ?? new NullLogger();
+    $logger = $logger ?? new Logger\Noop();
 
     if (PHP_SAPI === 'cli') {
         throw new Error('Cannot serve in a non CGI context');
@@ -61,9 +61,8 @@ function serve(Context $ctx, Handler $handler, LoggerInterface $logger = null, b
             throw $e;
         }
 
-        $logger->error('Uncaught error while handling request', [
-            'errors' => Err\collect($e),
-        ]);
+        $ctx = Logger\Meta\withValue($ctx, 'errors', Err\collect($e));
+        $logger->log(Logger\Level\error($ctx), 'Uncaught error while handling request');
 
         if (!$writer->areHeadersSent()) {
             $writer->headers()->set('Content-Type', 'text/plain');
@@ -96,12 +95,10 @@ function getUploadedFiles(Context $ctx): array
 
 /**
  * Returns the parsed cookies.
- *
- * @return Cookie[]
  */
-function getParsedCookies(Context $ctx): array
+function getParsedCookies(Context $ctx): Cookies
 {
-    return $ctx->value(CTX_PARSED_COOKIES) ?? [];
+    return $ctx->value(CTX_PARSED_COOKIES) ?? Cookies::create();
 }
 
 /**
@@ -233,11 +230,9 @@ function parseUri(array $server = null): Uri
 /**
  * @param null|array<string,string> $cookies
  *
- * @return Cookie[]
- *
  * @internal
  */
-function parseCookies(array $cookies = null): array
+function parseCookies(array $cookies = null): Cookies
 {
     $cookies = $cookies ?? $_COOKIE;
     $parsed = [];
@@ -246,5 +241,5 @@ function parseCookies(array $cookies = null): array
         $parsed[] = new Cookie($key, $value);
     }
 
-    return $parsed;
+    return Cookies::create(...$parsed);
 }
