@@ -21,8 +21,8 @@ use Castor\Str;
 
 class Cookies
 {
-    private const COOKIE_HEADER = 'Cookie';
-    private const SET_COOKIE_HEADER = 'Set-Cookie';
+    final public const COOKIE_HEADER = 'Cookie';
+    final public const SET_COOKIE_HEADER = 'Set-Cookie';
 
     /**
      * @var array<string,Cookie>
@@ -35,19 +35,21 @@ class Cookies
     }
 
     /**
-     * Parses the cookies from the response.
+     * Parses the cookies from the Set-Cookie header.
+     *
+     * This method is usually used with the headers of a Response or a ResponseWriter.
      */
-    public static function fromResponse(Response $response): Cookies
+    public static function fromSetCookieHeader(Headers $headers): static
     {
-        $headers = $response->headers->values(self::SET_COOKIE_HEADER);
-        $cookies = Arr\map($headers, Cookie::fromSetCookieString(...));
+        $values = $headers->values(self::SET_COOKIE_HEADER);
+        $cookies = Arr\map($values, Cookie::fromSetCookieString(...));
 
-        return self::create(...$cookies);
+        return static::create(...$cookies);
     }
 
-    public static function create(Cookie ...$cookies): Cookies
+    public static function create(Cookie ...$cookies): static
     {
-        $jar = new self();
+        $jar = new static();
         foreach ($cookies as $cookie) {
             $jar->cookies[$cookie->name] = $cookie;
         }
@@ -56,14 +58,16 @@ class Cookies
     }
 
     /**
-     * Parses the cookies from the request.
+     * Parses the cookies from the Cookie header.
+     *
+     * This method is usually used with the headers of a Request
      */
-    public static function fromRequest(Request $request): Cookies
+    public static function fromCookieHeader(Headers $headers): static
     {
-        $string = $request->headers->get(self::COOKIE_HEADER);
+        $string = $headers->get(self::COOKIE_HEADER);
         $cookies = Cookie::fromCookieString($string);
 
-        return self::create(...$cookies);
+        return static::create(...$cookies);
     }
 
     public function get(string $name): Cookie
@@ -78,7 +82,7 @@ class Cookies
 
     public function has(string $name): bool
     {
-        return array_key_exists($name, $this->cookies);
+        return \array_key_exists($name, $this->cookies);
     }
 
     /**
@@ -86,10 +90,10 @@ class Cookies
      */
     public function all(): array
     {
-        return array_values($this->cookies);
+        return \array_values($this->cookies);
     }
 
-    public function with(Cookie $cookie): Cookies
+    public function with(Cookie $cookie): static
     {
         $clone = clone $this;
         $clone->cookies[$cookie->name] = $cookie;
@@ -97,7 +101,7 @@ class Cookies
         return $clone;
     }
 
-    public function without(string $name): Cookies
+    public function without(string $name): static
     {
         $clone = clone $this;
 
@@ -109,22 +113,29 @@ class Cookies
     }
 
     /**
-     * Writes the cookies into the response.
+     * Writes the cookies as Set-Cookie in the headers.
+     *
+     * This method is usually called on the headers of a Response or a ResponseWriter.
+     *
+     * This method overrides all the previously set cookies. To set just a single cookie without
+     * modifying other cookies, please use the Castor\Net\Http\setCookie function.
      */
-    public function toResponse(Response $response): void
+    public function writeSetCookie(Headers $headers): void
     {
-        $response->headers->del(self::SET_COOKIE_HEADER);
+        $headers->del(self::SET_COOKIE_HEADER);
         foreach ($this->cookies as $cookie) {
-            $response->headers->add(self::SET_COOKIE_HEADER, $cookie->toSetCookieString());
+            setcookie($headers, $cookie);
         }
     }
 
     /**
-     * Writes the cookies into the request.
+     * Writes the cookies into the Cookie header.
+     *
+     * This method is usually called on the headers of a Request
      */
-    public function toRequest(Request $request): void
+    public function writeCookie(Headers $headers): void
     {
         $string = Str\join(Arr\map($this->cookies, static fn (Cookie $c) => $c->toCookieString()), '; ');
-        $request->headers->set(self::COOKIE_HEADER, $string);
+        $headers->set(self::COOKIE_HEADER, $string);
     }
 }

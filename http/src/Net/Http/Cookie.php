@@ -137,7 +137,7 @@ class Cookie
     public function toSetCookieString(): string
     {
         $parts = [
-            urlencode($this->name).'='.urlencode($this->value),
+            \urlencode($this->name).'='.\urlencode($this->value),
         ];
 
         if ('' !== $this->domain) {
@@ -149,7 +149,10 @@ class Cookie
         }
 
         if (null !== $this->expires) {
-            $date = $this->expires->setTimezone(new \DateTimeZone('UTC'))->format('D, d M Y H:i:s T');
+            $date = $this->expires
+                ->setTimezone(new \DateTimeZone('UTC'))
+                ->format('D, d M Y H:i:s T')
+            ;
             $parts[] = 'Expires='.$date;
         }
 

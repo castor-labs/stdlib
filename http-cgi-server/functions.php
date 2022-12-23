@@ -20,6 +20,7 @@ use Castor\Context;
 use Castor\Debug\Logger;
 use Castor\Err;
 use Castor\Io\Error;
+use Castor\Net\Http;
 use Castor\Net\Http\Cookie;
 use Castor\Net\Http\Cookies;
 use Castor\Net\Http\Handler;
@@ -94,14 +95,6 @@ function getUploadedFiles(Context $ctx): array
 }
 
 /**
- * Returns the parsed cookies.
- */
-function getParsedCookies(Context $ctx): Cookies
-{
-    return $ctx->value(CTX_PARSED_COOKIES) ?? Cookies::create();
-}
-
-/**
  * @internal
  */
 const CTX_UPLOADED_FILES = 'http.cgi.uploaded_files';
@@ -110,11 +103,6 @@ const CTX_UPLOADED_FILES = 'http.cgi.uploaded_files';
  * @internal
  */
 const CTX_PARSED_BODY = 'http.cgi.parsed_body';
-
-/**
- * @internal
- */
-const CTX_PARSED_COOKIES = 'http.cgi.parsed_cookies';
 
 /**
  * Parses the Request from the globals.
@@ -140,7 +128,7 @@ function parseRequest(Context &$ctx): Request
         }
     }
 
-    $ctx = Context\withValue($ctx, CTX_PARSED_COOKIES, parseCookies($_COOKIE));
+    $ctx = Http\withParsedCookies($ctx, parseCookies($_COOKIE));
 
     $uri = parseUri($server);
     $version = Version::from($server['SERVER_PROTOCOL'] ?? 'HTTP/1.1');
@@ -150,7 +138,7 @@ function parseRequest(Context &$ctx): Request
 }
 
 /**
- * Creates HTTP headers from the SERVER global.
+ * Parses HTTP Headers from the $_SERVER global.
  *
  * @internal
  */
@@ -170,7 +158,6 @@ function parseHeaders(array $server = []): Headers
             continue;
         }
 
-        // TODO: Evaluate if we need this on Nginx
         if (str_starts_with($key, 'CONTENT_')) {
             $name = 'content-'.Str\slice($key, 8);
             $headers->set($name, $value);
@@ -181,7 +168,7 @@ function parseHeaders(array $server = []): Headers
 }
 
 /**
- * Parses the URI from the SERVER global.
+ * Parses the URI from the $_SERVER global.
  *
  * @internal
  */
@@ -228,6 +215,8 @@ function parseUri(array $server = null): Uri
 }
 
 /**
+ * Parses the cookies from the $_COOKIE global.
+ *
  * @param null|array<string,string> $cookies
  *
  * @internal
