@@ -16,10 +16,39 @@ declare(strict_types=1);
 
 namespace Castor\Err;
 
-function last(): \RuntimeException
+/**
+ * Returns PHP's last error as an exception.
+ *
+ * @template T
+ *
+ * @param class-string<T> $class
+ *
+ * @return T
+ */
+function last(string $class = \RuntimeException::class): \Throwable
 {
     $array = \error_get_last();
-    $e = new \RuntimeException($array['message'] ?? 'Unknown Error', $array['type'] ?? 0);
+    $e = new $class($array['message'] ?? 'Unknown Error', $array['type'] ?? 0);
+    \error_clear_last();
+
+    return $e;
+}
+
+/**
+ * Returns PHP's last error as an exception but modifying the message.
+ *
+ * @template T
+ *
+ * @param class-string<T> $class
+ *
+ * @return T
+ */
+function lastReplace(string $substring, string $replacement, string $class = \RuntimeException::class): \Throwable
+{
+    $array = \error_get_last();
+    $message = $array['message'] ?? 'Unknown Error';
+    $message = str_replace($substring, $replacement, $message);
+    $e = new $class($message, $array['type'] ?? 0);
     \error_clear_last();
 
     return $e;

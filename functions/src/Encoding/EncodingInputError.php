@@ -14,26 +14,8 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-$lib = __DIR__.'/lib';
+namespace Castor\Encoding;
 
-require_once $lib.'/assert.php';
-
-require_once $lib.'/hash.php';
-
-require_once $lib.'/base64.php';
-
-require_once $lib.'/err.php';
-
-require_once $lib.'/str.php';
-
-require_once $lib.'/arr.php';
-
-require_once $lib.'/json.php';
-
-require_once $lib.'/hex.php';
-
-require_once $lib.'/bytes.php';
-
-require_once $lib.'/os.path.php';
-
-require_once $lib.'/runtime.php';
+class EncodingInputError extends \Exception
+{
+}

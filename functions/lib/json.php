@@ -16,26 +16,40 @@ declare(strict_types=1);
 
 namespace Castor\Encoding\Json;
 
+use Castor\Encoding\EncodingInputError;
+
 /**
- * @throws \JsonException
+ * @throws EncodingInputError
  */
 function decode(string $json): array
 {
-    return \json_decode($json, true, 512, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_IGNORE);
+    try {
+        return \json_decode($json, true, 512, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_IGNORE);
+    } catch (\JsonException $e) {
+        throw new EncodingInputError('Could not decode json', 0, $e);
+    }
 }
 
 /**
- * @throws \JsonException
+ * @throws EncodingInputError
  */
 function encodePretty(mixed $json): string
 {
-    return \json_encode($json, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    try {
+        return \json_encode($json, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    } catch (\JsonException $e) {
+        throw new EncodingInputError('Could not encode json', 0, $e);
+    }
 }
 
 /**
- * @throws \JsonException
+ * @throws EncodingInputError
  */
 function encode(mixed $json): string
 {
-    return \json_encode($json, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
+    try {
+        return \json_encode($json, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
+    } catch (\JsonException $e) {
+        throw new EncodingInputError('Could not encode json', 0, $e);
+    }
 }
