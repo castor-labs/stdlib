@@ -129,6 +129,26 @@ class Cookie
         );
     }
 
+    /**
+     * Creates a new cookie based on the values of this one
+     *
+     * @return Cookie
+     */
+    public function copy(): Cookie
+    {
+        return new self(
+            $this->name,
+            $this->value,
+            $this->path,
+            $this->domain,
+            $this->expires,
+            $this->maxAge,
+            $this->secure,
+            $this->httpOnly,
+            $this->sameSite
+        );
+    }
+
     public function toCookieString(): string
     {
         return \urlencode($this->name).'='.\urlencode($this->value);
