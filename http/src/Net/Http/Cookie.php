@@ -130,9 +130,7 @@ class Cookie
     }
 
     /**
-     * Creates a new cookie based on the values of this one
-     *
-     * @return Cookie
+     * Creates a new cookie based on the values of this one.
      */
     public function copy(): Cookie
     {
