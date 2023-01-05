@@ -37,11 +37,13 @@ class Cookie
     public function expire(): void
     {
         $this->expires = new \DateTimeImmutable('-5 years');
+        $this->maxAge = 0; // Ignore previously set Max-Age
     }
 
     public function rememberForever(): void
     {
         $this->expires = new \DateTimeImmutable('+5 years');
+        $this->maxAge = 0; // Ignore previous set Max-Age
     }
 
     /**
