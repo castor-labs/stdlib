@@ -74,7 +74,17 @@ class Headers implements \IteratorAggregate, WriterTo
      */
     public function get(string $key): string
     {
-        return $this->headers[self::canonize($key)][0] ?? '';
+        return $this->lookup($key) ?? '';
+    }
+
+    /**
+     * Returns the first value of $key.
+     *
+     * If no value is found, it returns null
+     */
+    public function lookup(string $key): ?string
+    {
+        return $this->headers[self::canonize($key)][0] ?? null;
     }
 
     /**
