@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Castor\Context;
 
+use Castor;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,9 +28,9 @@ class KVPairTest extends TestCase
 {
     public function testDebug(): void
     {
-        $ctx = nil();
-        $ctx = withValue($ctx, 'foo', 'bar');
-        $ctx = withValue($ctx, 'bar', 'foo');
+        $ctx = Castor\Context\nil();
+        $ctx = Castor\Context\withValue($ctx, 'foo', 'bar');
+        $ctx = Castor\Context\withValue($ctx, 'bar', 'foo');
 
         $chain = KVPair::debug($ctx);
 

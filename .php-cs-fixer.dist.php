@@ -1,5 +1,7 @@
 <?php
 
+use PhpCsFixer\Fixer\FunctionNotation\NativeFunctionInvocationFixer;
+
 $header = <<<EOF
 @project The Castor Standard Library
 @link https://github.com/castor-labs/stdlib
@@ -26,6 +28,10 @@ return (new PhpCsFixer\Config())
         '@PhpCsFixer' => true,
         'declare_strict_types' => true,
         'header_comment' => ['header' => $header, 'comment_type' => 'PHPDoc'],
+        'native_function_invocation' => [
+            'include' => [NativeFunctionInvocationFixer::SET_ALL],
+            'scope' => 'namespaced',
+        ]
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

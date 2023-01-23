@@ -23,16 +23,10 @@ use Castor\Str;
  */
 const SEP = DIRECTORY_SEPARATOR;
 
-function dirname(string $path, int $levels = 0): string
-{
-    if (0 === $levels) {
-        return \realpath($path);
-    }
-
-    return \dirname($path, $levels);
-}
-
+/**
+ * @psalm-pure
+ */
 function join(string $base, string ...$parts): string
 {
-    return dirname($base).SEP.Str\join($parts, SEP);
+    return $base.SEP.Str\join($parts, SEP);
 }

@@ -31,17 +31,22 @@ class Headers implements \IteratorAggregate, WriterTo
      */
     private array $headers;
 
-    public function __construct()
+    /**
+     * @psalm-external-mutation-free
+     */
+    final public function __construct()
     {
         $this->headers = [];
     }
 
     /**
      * @param array<string,string> $map
+     *
+     * @psalm-external-mutation-free
      */
     public static function fromMap(array $map): Headers
     {
-        $header = new self();
+        $header = new static();
         foreach ($map as $key => $value) {
             $header->set($key, $value);
         }
@@ -51,6 +56,8 @@ class Headers implements \IteratorAggregate, WriterTo
 
     /**
      * Adds a value to $key.
+     *
+     * @psalm-external-mutation-free
      */
     public function add(string $key, string $value): void
     {
@@ -61,6 +68,8 @@ class Headers implements \IteratorAggregate, WriterTo
      * Sets the value of $key.
      *
      * This overrides previously added values of $key
+     *
+     * @psalm-external-mutation-free
      */
     public function set(string $key, string $value): void
     {
@@ -71,6 +80,8 @@ class Headers implements \IteratorAggregate, WriterTo
      * Returns the first value of $key.
      *
      * If no value found, it returns an empty string
+     *
+     * @psalm-mutation-free
      */
     public function get(string $key): string
     {
@@ -81,6 +92,8 @@ class Headers implements \IteratorAggregate, WriterTo
      * Returns the first value of $key.
      *
      * If no value is found, it returns null
+     *
+     * @psalm-mutation-free
      */
     public function lookup(string $key): ?string
     {
@@ -88,13 +101,20 @@ class Headers implements \IteratorAggregate, WriterTo
     }
 
     /**
+     * Returns all the values of a Header.
+     *
      * @return string[]
+     *
+     * @psalm-mutation-free
      */
     public function values(string $key): array
     {
         return $this->headers[self::canonize($key)] ?? [];
     }
 
+    /**
+     * @psalm-external-mutation-free
+     */
     public function del(string $key): void
     {
         unset($this->headers[self::canonize($key)]);
@@ -102,13 +122,12 @@ class Headers implements \IteratorAggregate, WriterTo
 
     /**
      * Creates a copy of the headers.
+     *
+     * @psalm-external-mutation-free
      */
     public function copy(): Headers
     {
-        $copy = new self();
-        $copy->headers = $this->headers;
-
-        return $copy;
+        return clone $this;
     }
 
     /**
@@ -118,7 +137,7 @@ class Headers implements \IteratorAggregate, WriterTo
     {
         $written = 0;
         foreach ($this as $key => $value) {
-            $written += $writer->write(sprintf('%s: %s%s', $key, $value, "\n"));
+            $written += $writer->write(\sprintf('%s: %s%s', $key, $value, "\n"));
         }
 
         // After the headers there is always an extra line for the body.
@@ -129,6 +148,8 @@ class Headers implements \IteratorAggregate, WriterTo
 
     /**
      * Returns a generator that iterates over every header value.
+     *
+     * @psalm-mutation-free
      */
     public function getIterator(): \Iterator
     {
@@ -139,11 +160,14 @@ class Headers implements \IteratorAggregate, WriterTo
         }
     }
 
+    /**
+     * @psalm-pure
+     */
     private static function canonize(string $key): string
     {
         $key = Str\toLower($key);
         $key = Str\replace($key, ' ', '');
 
-        return ucwords($key, '-');
+        return \ucwords($key, '-');
     }
 }

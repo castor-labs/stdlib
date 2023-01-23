@@ -7,10 +7,10 @@ services:
   lib:
     image: castor/stdlib:dev
     build:
-      context: .
+      context: ./.castor/docker
       dockerfile: ./lib/Dockerfile
       target: dev
     container_name: lib.castor-stdlib.dev
     volumes:
-      - ../..:/castor/lib
+      - ./:/castor/lib
     user: ${UID:-1000}

@@ -16,20 +16,20 @@ declare(strict_types=1);
 
 namespace Castor\Encoding\Hex;
 
-use Castor\Encoding\EncodingInputError;
+use Castor\Encoding\InputError;
 use Castor\Err;
 
 /**
- * @throws EncodingInputError
+ * @throws InputError
  *
  * @noinspection PhpDocMissingThrowsInspection
  */
 function decode(string $hex): string
 {
     $decoded = @\hex2bin($hex);
-    if (!is_string($decoded)) {
+    if (!\is_string($decoded)) {
         // @noinspection PhpUnhandledExceptionInspection
-        throw Err\lastReplace('bin2hex(): ', '', EncodingInputError::class);
+        throw Err\lastReplace('bin2hex(): ', '', InputError::class);
     }
 
     return $decoded;

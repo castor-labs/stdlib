@@ -29,6 +29,6 @@ final class RequestBody extends Io\PhpResource
 {
     public static function create(): RequestBody
     {
-        return self::make(fopen('php://input', 'rb'));
+        return self::make(\fopen('php://input', 'rb'));
     }
 }

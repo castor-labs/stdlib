@@ -47,7 +47,7 @@ function lastReplace(string $substring, string $replacement, string $class = \Ru
 {
     $array = \error_get_last();
     $message = $array['message'] ?? 'Unknown Error';
-    $message = str_replace($substring, $replacement, $message);
+    $message = \str_replace($substring, $replacement, $message);
     $e = new $class($message, $array['type'] ?? 0);
     \error_clear_last();
 
@@ -63,7 +63,7 @@ function collect(\Throwable $e): array
     $t = $e;
     while ($t instanceof \Throwable) {
         $errors[] = [
-            'type' => gettype($e),
+            'type' => \gettype($e),
             'message' => $e->getMessage(),
             'code' => $e->getCode(),
             'file' => $e->getFile(),

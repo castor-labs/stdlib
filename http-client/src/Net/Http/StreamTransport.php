@@ -36,7 +36,7 @@ final class StreamTransport implements Transport
         private readonly string $proxy = '',
         private readonly int $maxRedirects = 10,
         private readonly float $timeout = -1,
-        private readonly TLS $tls = new TLS(),
+        private readonly TLSConfig $tls = new TLSConfig(),
     ) {
     }
 
@@ -82,20 +82,20 @@ final class StreamTransport implements Transport
             $context['http']['request_fulluri'] = true;
         }
 
-        $resource = @fopen($request->uri->toString(), 'rb', false, stream_context_create($context));
-        if (!is_resource($resource)) {
-            throw new TransportError($request, error_get_last()['message'] ?? 'Unknown error', 0);
+        $resource = @\fopen($request->uri->toString(), 'rb', false, \stream_context_create($context));
+        if (!\is_resource($resource)) {
+            throw new TransportError($request, \error_get_last()['message'] ?? 'Unknown error', 0);
         }
 
-        stream_set_blocking($resource, false);
+        \stream_set_blocking($resource, false);
 
         // We extract relevant stream meta data
-        $meta = stream_get_meta_data($resource);
+        $meta = \stream_get_meta_data($resource);
 
         $responses = $this->parseResponses($meta['wrapper_data'] ?? []);
 
         // Pick the last response and put the body there.
-        $response = $responses[count($responses) - 1];
+        $response = $responses[\count($responses) - 1];
 
         $response->body = Io\Stream::create($resource);
 

@@ -54,7 +54,7 @@ function stdin(): Reader
 
 function lookupEnv(string $env): ?string
 {
-    $string = \getenv($env);
+    $string = getenv($env);
     if (\is_string($string)) {
         return $string;
     }
@@ -69,7 +69,7 @@ function getEnv(string $env): string
 
 function getCwd(): string
 {
-    $result = \getcwd();
+    $result = getcwd();
     if (false === $result) {
         throw Err\last();
     }
@@ -94,7 +94,7 @@ function tempDir(): string
 
 function makeDir(string $path, int $mode = 0755, bool $recursive = true): string
 {
-    if (!is_dir($path) && !@\mkdir($path, $mode, $recursive) && !is_dir($path)) {
+    if (!\is_dir($path) && !@\mkdir($path, $mode, $recursive) && !\is_dir($path)) {
         throw Err\last();
     }
 

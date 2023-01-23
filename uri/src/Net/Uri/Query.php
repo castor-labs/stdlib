@@ -20,6 +20,8 @@ use IteratorAggregate;
 
 /**
  * @template-implements IteratorAggregate<string, string>
+ *
+ * @psalm-external-mutation-free
  */
 class Query implements \IteratorAggregate
 {
@@ -49,43 +51,60 @@ class Query implements \IteratorAggregate
     public static function decode(string $rawQuery): Query
     {
         $query = new self();
-        $parts = explode('&', $rawQuery);
+        $parts = \explode('&', $rawQuery);
         foreach ($parts as $part) {
-            $i = strpos($part, '=');
-            if (!is_int($i)) {
-                $query->items[urldecode($part)][] = '';
+            $i = \strpos($part, '=');
+            if (!\is_int($i)) {
+                $query->items[\urldecode($part)][] = '';
 
                 continue;
             }
 
-            $key = urldecode(substr($part, 0, $i));
-            $value = urldecode(substr($part, $i + 1));
+            $key = \urldecode(\substr($part, 0, $i));
+            $value = \urldecode(\substr($part, $i + 1));
             $query->items[$key][] = $value;
         }
 
         return $query;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function get(string $key): string
     {
         return $this->values($key)[0] ?? '';
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function lookup(string $key): ?string
     {
         return $this->values($key)[0] ?? null;
     }
 
+    /**
+     * @return array|string[]
+     *
+     * @psalm-mutation-free
+     */
     public function values(string $key): array
     {
         return $this->items[$key] ?? [];
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function has(string $key): bool
     {
-        return array_key_exists($key, $this->items);
+        return \array_key_exists($key, $this->items);
     }
 
+    /**
+     * @return $this
+     */
     public function add(string $key, string $value): Query
     {
         $this->items[$key][] = $value;
@@ -103,6 +122,9 @@ class Query implements \IteratorAggregate
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function del(string $key): Query
     {
         unset($this->items[$key]);
@@ -110,16 +132,19 @@ class Query implements \IteratorAggregate
         return $this;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function isEmpty(): bool
     {
         return [] === $this->items;
     }
 
-    public function toMap(): array
-    {
-        return iterator_to_array($this);
-    }
-
+    /**
+     * @return array|string[][]
+     *
+     * @psalm-mutation-free
+     */
     public function toArray(): array
     {
         return $this->items;
@@ -127,6 +152,8 @@ class Query implements \IteratorAggregate
 
     /**
      * @return \Iterator<string, string>
+     *
+     * @psalm-mutation-free
      */
     public function getIterator(): \Iterator
     {
@@ -137,19 +164,22 @@ class Query implements \IteratorAggregate
         }
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function encode(): string
     {
         $parts = [];
         foreach ($this as $key => $value) {
             if ('' === $value) {
-                $parts[] = urlencode($key);
+                $parts[] = \urlencode($key);
 
                 continue;
             }
 
-            $parts[] = urlencode($key).'='.urlencode($value);
+            $parts[] = \urlencode($key).'='.\urlencode($value);
         }
 
-        return implode('&', $parts);
+        return \implode('&', $parts);
     }
 }

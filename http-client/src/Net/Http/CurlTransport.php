@@ -67,18 +67,18 @@ final class CurlTransport implements Transport
         $curlInfo = null;
 
         try {
-            curl_exec($handle);
-            $this->checkError($request, $handle, curl_errno($handle));
+            \curl_exec($handle);
+            $this->checkError($request, $handle, \curl_errno($handle));
 
             if ($this->exposeCurlInfo) {
-                $curlInfo = curl_getinfo($handle);
+                $curlInfo = \curl_getinfo($handle);
             }
         } finally {
             $this->releaseHandle($handle);
         }
 
         if (null !== $curlInfo) {
-            $response->headers->add('__curl_info', serialize($curlInfo));
+            $response->headers->add('__curl_info', \serialize($curlInfo));
         }
 
         $stream->seek(0, Io\SEEK_START);
@@ -92,7 +92,7 @@ final class CurlTransport implements Transport
      */
     private function createHandle(Request $request): \CurlHandle
     {
-        $handle = [] !== $this->handles ? array_pop($this->handles) : curl_init();
+        $handle = [] !== $this->handles ? \array_pop($this->handles) : \curl_init();
         if (false === $handle) {
             throw new TransportError($request, 'Could not create curl handle', 0);
         }
@@ -103,20 +103,20 @@ final class CurlTransport implements Transport
     private function prepare(\CurlHandle $handle, Request $request, Io\Stream $buffer): Response
     {
         if (\defined('CURLOPT_PROTOCOLS')) {
-            curl_setopt($handle, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
-            curl_setopt($handle, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+            \curl_setopt($handle, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+            \curl_setopt($handle, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
         }
 
-        curl_setopt($handle, CURLOPT_HEADER, false);
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, false);
-        curl_setopt($handle, CURLOPT_FAILONERROR, false);
+        \curl_setopt($handle, CURLOPT_HEADER, false);
+        \curl_setopt($handle, CURLOPT_RETURNTRANSFER, false);
+        \curl_setopt($handle, CURLOPT_FAILONERROR, false);
 
         $this->setOptionsFromTransport($handle);
         $this->setOptionsFromRequest($handle, $request);
 
         $response = Response::create();
 
-        curl_setopt($handle, CURLOPT_HEADERFUNCTION, static function (\CurlHandle $ch, string $data) use ($response) {
+        \curl_setopt($handle, CURLOPT_HEADERFUNCTION, static function (\CurlHandle $ch, string $data) use ($response) {
             $str = Str\trim($data);
             if ('' !== $str) {
                 if (0 === Str\index(Str\toLower($str), 'http/')) {
@@ -134,13 +134,13 @@ final class CurlTransport implements Transport
             return Bytes\len($data);
         });
 
-        curl_setopt($handle, CURLOPT_WRITEFUNCTION, static function (\CurlHandle $ch, string $data) use ($buffer) {
+        \curl_setopt($handle, CURLOPT_WRITEFUNCTION, static function (\CurlHandle $ch, string $data) use ($buffer) {
             return $buffer->write($data);
         });
 
         // Apply custom options
         if ([] !== $this->customOptions) {
-            curl_setopt_array($handle, $this->customOptions);
+            \curl_setopt_array($handle, $this->customOptions);
         }
 
         return $response;
@@ -204,7 +204,7 @@ final class CurlTransport implements Transport
                 break;
         }
 
-        curl_setopt_array($handle, $options);
+        \curl_setopt_array($handle, $options);
     }
 
     /**
@@ -249,16 +249,16 @@ final class CurlTransport implements Transport
     private function setOptionsFromTransport(\CurlHandle $handle): void
     {
         if ('' !== $this->proxy) {
-            curl_setopt($handle, CURLOPT_PROXY, $this->proxy);
+            \curl_setopt($handle, CURLOPT_PROXY, $this->proxy);
         }
 
         $canFollow = $this->followRedirects;
-        curl_setopt($handle, CURLOPT_FOLLOWLOCATION, $canFollow);
-        curl_setopt($handle, CURLOPT_MAXREDIRS, $canFollow ? $this->maxRedirects : 0);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, $this->sslVerify ? 1 : 0);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, $this->sslVerify ? 2 : 0);
+        \curl_setopt($handle, CURLOPT_FOLLOWLOCATION, $canFollow);
+        \curl_setopt($handle, CURLOPT_MAXREDIRS, $canFollow ? $this->maxRedirects : 0);
+        \curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, $this->sslVerify ? 1 : 0);
+        \curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, $this->sslVerify ? 2 : 0);
         if ($this->timeout > 0) {
-            curl_setopt($handle, CURLOPT_TIMEOUT, $this->timeout);
+            \curl_setopt($handle, CURLOPT_TIMEOUT, $this->timeout);
         }
     }
 
@@ -277,13 +277,13 @@ final class CurlTransport implements Transport
             case CURLE_COULDNT_CONNECT:
             case CURLE_OPERATION_TIMEOUTED:
             case CURLE_SSL_CONNECT_ERROR:
-                throw new TransportError($request, curl_error($handle), $error);
+                throw new TransportError($request, \curl_error($handle), $error);
 
             case CURLE_ABORTED_BY_CALLBACK:
-                throw new TransportError($request, curl_error($handle), $error);
+                throw new TransportError($request, \curl_error($handle), $error);
 
             default:
-                throw new TransportError($request, curl_error($handle), $error);
+                throw new TransportError($request, \curl_error($handle), $error);
         }
     }
 
@@ -293,17 +293,17 @@ final class CurlTransport implements Transport
     private function releaseHandle(\CurlHandle $handle): void
     {
         if (\count($this->handles) >= $this->maxHandles) {
-            curl_close($handle);
+            \curl_close($handle);
         } else {
             // Remove all callback functions as they can hold onto references
             // and are not cleaned up by curl_reset. Using curl_setopt_array
             // does not work for some reason, so removing each one
             // individually.
-            curl_setopt($handle, CURLOPT_HEADERFUNCTION, null);
-            curl_setopt($handle, CURLOPT_READFUNCTION, null);
-            curl_setopt($handle, CURLOPT_WRITEFUNCTION, null);
-            curl_setopt($handle, CURLOPT_PROGRESSFUNCTION, null);
-            curl_reset($handle);
+            \curl_setopt($handle, CURLOPT_HEADERFUNCTION, null);
+            \curl_setopt($handle, CURLOPT_READFUNCTION, null);
+            \curl_setopt($handle, CURLOPT_WRITEFUNCTION, null);
+            \curl_setopt($handle, CURLOPT_PROGRESSFUNCTION, null);
+            \curl_reset($handle);
 
             if (!\in_array($handle, $this->handles, true)) {
                 $this->handles[] = $handle;

@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Castor\Net\Uri;
 
+/**
+ * @psalm-external-mutation-free
+ */
 class UserInfo
 {
     public function __construct(
@@ -26,32 +29,41 @@ class UserInfo
 
     public static function create(string $user, ?string $pass = null): UserInfo
     {
-        return new self(rawurldecode($user), null !== $pass ? rawurldecode($pass) : null);
+        return new self(\rawurldecode($user), null !== $pass ? \rawurldecode($pass) : null);
     }
 
     public static function parse(string $string): UserInfo
     {
-        $i = strpos($string, ':');
-        if (!is_int($i)) {
+        $i = \strpos($string, ':');
+        if (!\is_int($i)) {
             return self::create($string);
         }
 
         return self::create(
-            substr($string, 0, $i),
-            substr($string, $i + 1),
+            \substr($string, 0, $i),
+            \substr($string, $i + 1),
         );
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function getUser(): string
     {
         return $this->user;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function getPass(): ?string
     {
         return $this->pass;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function toString(): string
     {
         $userInfo = $this->user;
@@ -62,13 +74,24 @@ class UserInfo
         return $userInfo;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function encode(): string
     {
-        $userInfo = rawurlencode($this->user);
+        $userInfo = \rawurlencode($this->user);
         if (null !== $this->pass) {
-            $userInfo .= ':'.rawurlencode($this->pass);
+            $userInfo .= ':'.\rawurlencode($this->pass);
         }
 
         return $userInfo;
+    }
+
+    /**
+     * @psalm-mutation-free
+     */
+    public function isEmpty(): bool
+    {
+        return '' === $this->user && null === $this->pass;
     }
 }

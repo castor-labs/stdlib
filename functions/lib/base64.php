@@ -16,11 +16,17 @@ declare(strict_types=1);
 
 namespace Castor\Encoding\Base64\Std;
 
+/**
+ * @psalm-pure
+ */
 function encode(string $string): string
 {
     return \base64_encode($string);
 }
 
+/**
+ * @psalm-pure
+ */
 function decode(string $base64): string
 {
     return \base64_decode($base64);

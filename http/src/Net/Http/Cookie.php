@@ -17,11 +17,19 @@ declare(strict_types=1);
 namespace Castor\Net\Http;
 
 use Castor\Arr;
+use Castor\Encoding\Url;
 use Castor\Str;
 
+/**
+ * Class Cookie represents a Cookie as defined in RFC 6265.
+ *
+ * @psalm-external-mutation-free
+ */
 class Cookie
 {
-    public function __construct(
+    public const EXPIRES_DATE_FORMAT = 'D, d M Y H:i:s T';
+
+    final public function __construct(
         public string $name,
         public string $value = '',
         public string $path = '',
@@ -30,7 +38,7 @@ class Cookie
         public int $maxAge = 0,
         public bool $secure = false,
         public bool $httpOnly = false,
-        public SameSite $sameSite = SameSite::LAX,
+        public ?SameSite $sameSite = null,
     ) {
     }
 
@@ -47,42 +55,51 @@ class Cookie
     }
 
     /**
-     * @return Cookie[]
+     * Creates a list of Cookies from a Cookie header string.
+     *
+     * @return static[]
      */
-    public static function fromCookieString(string $string): array
+    final public static function fromCookieString(string $string): array
     {
-        return Arr\map(self::splitOnAttrDelimiter($string), static function (string $pair) {
+        return Arr\map(static::splitOnAttrDelimiter($string), static function (string $pair) {
             return static::fromCookiePair($pair);
         });
     }
 
-    public static function fromSetCookieString(string $string): Cookie
+    /**
+     * Creates a Cookie from Set-Cookie header string.
+     *
+     * If the cookie is malformed, then an empty cookie with name as an empty string is returned.
+     *
+     * If the Expires date or the SameSite attributes are invalid, those are silently skipped and ommited.
+     */
+    final public static function fromSetCookieString(string $string): static
     {
-        $rawAttributes = self::splitOnAttrDelimiter($string);
-        $rawAttribute = array_shift($rawAttributes);
+        $rawAttributes = static::splitOnAttrDelimiter($string);
+        $firstAttribute = Arr\shift($rawAttributes);
 
-        if (!is_string($rawAttribute)) {
-            throw new \InvalidArgumentException(sprintf(
-                'The provided cookie string "%s" must have at least one attribute',
-                $string
-            ));
+        if (!\is_string($firstAttribute)) {
+            return new static('');
         }
 
-        [$name, $value] = self::splitOnAttrDelimiter($rawAttribute);
+        [$name, $value] = static::splitNameValuePair($firstAttribute);
 
         $cookie = new static($name, $value);
 
-        while ($rawAttribute = array_shift($rawAttributes)) {
-            $rawAttributePair = explode('=', $rawAttribute, 2);
+        while ($rawAttribute = Arr\shift($rawAttributes)) {
+            $rawAttributePair = Str\split($rawAttribute, '=', 2);
 
             $attributeKey = $rawAttributePair[0];
-            $attributeValue = count($rawAttributePair) > 1 ? $rawAttributePair[1] : null;
+            $attributeValue = \count($rawAttributePair) > 1 ? $rawAttributePair[1] : null;
 
-            $attributeKey = strtolower($attributeKey);
+            $attributeKey = Str\toLower($attributeKey);
 
             switch ($attributeKey) {
                 case 'expires':
-                    $cookie->expires = \DateTimeImmutable::createFromFormat('D, d M Y H:i:s T', $attributeValue);
+                    $datetime = \DateTimeImmutable::createFromFormat(self::EXPIRES_DATE_FORMAT, $attributeValue);
+                    if ($datetime instanceof \DateTimeImmutable) {
+                        $cookie->expires = $datetime;
+                    }
 
                     break;
 
@@ -112,7 +129,7 @@ class Cookie
                     break;
 
                 case 'samesite':
-                    $cookie->sameSite = SameSite::tryFrom((string) $attributeValue) ?? SameSite::NONE;
+                    $cookie->sameSite = SameSite::tryFrom((string) $attributeValue);
 
                     break;
             }
@@ -121,9 +138,9 @@ class Cookie
         return $cookie;
     }
 
-    public static function fromCookiePair(string $pair): Cookie
+    final public static function fromCookiePair(string $pair): static
     {
-        [$name, $value] = self::splitOnAttrDelimiter($pair);
+        [$name, $value] = static::splitNameValuePair($pair);
 
         return new Cookie(
             $name,
@@ -134,30 +151,38 @@ class Cookie
     /**
      * Creates a new cookie based on the values of this one.
      */
-    public function copy(): Cookie
+    public function copy(): static
     {
-        return new self(
-            $this->name,
-            $this->value,
-            $this->path,
-            $this->domain,
-            $this->expires,
-            $this->maxAge,
-            $this->secure,
-            $this->httpOnly,
-            $this->sameSite
-        );
+        return clone $this;
     }
 
+    /**
+     * Returns the cookie as a string for use on a Cookie header.
+     *
+     * If the cookie name is empty, then this method returns an empty string
+     */
     public function toCookieString(): string
     {
-        return \urlencode($this->name).'='.\urlencode($this->value);
+        if ('' === $this->name) {
+            return '';
+        }
+
+        return Url\encode($this->name).'='.Url\encode($this->value);
     }
 
+    /**
+     * Returns the cookie as a string for use on a Set-Cookie header.
+     *
+     * If the cookie name is empty, this method returns an empty string
+     */
     public function toSetCookieString(): string
     {
+        if ('' === $this->name) {
+            return '';
+        }
+
         $parts = [
-            \urlencode($this->name).'='.\urlencode($this->value),
+            Url\encode($this->name).'='.Url\encode($this->value),
         ];
 
         if ('' !== $this->domain) {
@@ -171,7 +196,7 @@ class Cookie
         if (null !== $this->expires) {
             $date = $this->expires
                 ->setTimezone(new \DateTimeZone('UTC'))
-                ->format('D, d M Y H:i:s T')
+                ->format(self::EXPIRES_DATE_FORMAT)
             ;
             $parts[] = 'Expires='.$date;
         }
@@ -188,11 +213,22 @@ class Cookie
             $parts[] = 'HttpOnly';
         }
 
-        if ($this->sameSite) {
+        if (null !== $this->sameSite) {
             $parts[] = 'SameSite='.$this->sameSite->value;
         }
 
         return Str\join($parts, '; ');
+    }
+
+    /**
+     * @return array{0: string, 1: string}
+     */
+    private static function splitNameValuePair(string $pair): array
+    {
+        [$name, $value] = Str\cut($pair, '=');
+        $value = Url\decode($value);
+
+        return [$name, $value];
     }
 
     /**
@@ -206,16 +242,5 @@ class Cookie
         }
 
         return Arr\filter($splitAttributes);
-    }
-
-    /**
-     * @return array{0: string, 1: string}
-     */
-    private static function splitCookiePair(string $pair): array
-    {
-        [$name, $value] = Str\cut($pair, '=');
-        $value = \urldecode($value);
-
-        return [$name, $value];
     }
 }

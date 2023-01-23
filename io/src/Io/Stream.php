@@ -30,7 +30,7 @@ final class Stream extends PhpResource
      */
     public static function memory(string $string = ''): Stream
     {
-        $buffer = self::make(fopen('php://memory', 'w+b'));
+        $buffer = self::make(\fopen('php://memory', 'w+b'));
         if ('' === $string) {
             return $buffer;
         }
@@ -55,6 +55,6 @@ final class Stream extends PhpResource
 
     public static function open(string $filename, string $mode): Stream
     {
-        return self::make(fopen($filename, $mode));
+        return self::make(\fopen($filename, $mode));
     }
 }

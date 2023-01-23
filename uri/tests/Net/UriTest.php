@@ -304,6 +304,17 @@ class UriTest extends TestCase
     /**
      * @throws ParseError
      */
+    public function testItParsesDotPaths(): void
+    {
+        $this->testParse('../../..//search?q=dotnet', Uri::fromParts(
+            path: '../../..//search',
+            rawQuery: 'q=dotnet'
+        ));
+    }
+
+    /**
+     * @throws ParseError
+     */
     public function testAccessorsWorkCorrectly(): void
     {
         $uri = Uri::parse('mysql://user:pass@localhost:3306/database?version=5.7#master');

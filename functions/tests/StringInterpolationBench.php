@@ -31,7 +31,7 @@ class StringInterpolationBench
      */
     public function benchSprintf(array $params): void
     {
-        sprintf(self::TEMPLATE, $params[0], $params[1]);
+        \sprintf(self::TEMPLATE, $params[0], $params[1]);
     }
 
     /**

@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Castor;
 
-use Castor\Encoding\EncodingInputError;
 use Castor\Encoding\Hex;
+use Castor\Encoding\InputError;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -36,7 +36,7 @@ class HexFunctionsTest extends TestCase
     }
 
     /**
-     * @throws EncodingInputError
+     * @throws InputError
      */
     public function testDecode(): void
     {
@@ -50,7 +50,7 @@ class HexFunctionsTest extends TestCase
     {
         $input = 'not a hex string';
 
-        $this->expectException(EncodingInputError::class);
+        $this->expectException(InputError::class);
         $this->expectErrorMessage('Input string must be hexadecimal string');
         Hex\decode($input);
     }

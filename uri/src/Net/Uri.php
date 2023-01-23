@@ -27,8 +27,12 @@ use Castor\Net\Uri\UserInfo;
  *
  * This has been designed with extensibility in mind so other kinds of objects based on URIs can benefit of its
  * API, for instance URLs or URNs.
+ *
+ * This object is completely immutable and is capable of performing the most basic operations defined in RFC 3986.
+ *
+ * @psalm-external-mutation-free
  */
-class Uri
+class Uri implements \Stringable, \JsonSerializable
 {
     private string $scheme;
     private UserInfo $userinfo;
@@ -39,6 +43,9 @@ class Uri
     private string $fragment;
     private string $rawFragment;
 
+    /**
+     * @psalm-external-mutation-free
+     */
     final private function __construct()
     {
         $this->scheme = '';
@@ -49,6 +56,19 @@ class Uri
         $this->rawQuery = '';
         $this->fragment = '';
         $this->rawFragment = '';
+    }
+
+    /**
+     * @psalm-mutation-free
+     */
+    public function __toString(): string
+    {
+        return $this->toString();
+    }
+
+    public function __clone()
+    {
+        $this->userinfo = clone $this->userinfo;
     }
 
     public static function isValid(string $uri): bool
@@ -65,8 +85,10 @@ class Uri
     /**
      * Creates a new URI from its parts.
      *
-     * $host takes a <hostname>:<port> or <hostname> form.
-     * $userinfo takes a <user>:<pass> or <user> form.
+     * $host takes a "hostname:port" or "hostname" form.
+     * $userinfo takes a "user:pass" or "user" form.
+     *
+     * @psalm-allow-private-mutation
      */
     public static function fromParts(
         string $scheme = '',
@@ -95,10 +117,12 @@ class Uri
      * Parses a URI from its string representation.
      *
      * @throws ParseError
+     *
+     * @psalm-allow-private-mutation
      */
-    public static function parse(string $string): Uri
+    public static function parse(string $string): static
     {
-        $result = parse_url($string);
+        $result = \parse_url($string);
         if (false === $result) {
             throw new ParseError('Error while parsing uri');
         }
@@ -107,7 +131,7 @@ class Uri
         $uri->scheme = $result['scheme'] ?? '';
 
         $uri->rawPath = $result['path'] ?? '';
-        $uri->path = rawurldecode($uri->rawPath);
+        $uri->path = \rawurldecode($uri->rawPath);
         if ($uri->path === $uri->rawPath) {
             $uri->rawPath = '';
         }
@@ -115,7 +139,7 @@ class Uri
         $uri->rawQuery = $result['query'] ?? '';
 
         $uri->rawFragment = $result['fragment'] ?? '';
-        $uri->fragment = rawurldecode($uri->rawFragment);
+        $uri->fragment = \rawurldecode($uri->rawFragment);
         if ($uri->fragment === $uri->rawFragment) {
             $uri->rawFragment = '';
         }
@@ -131,6 +155,9 @@ class Uri
         return $uri;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function getScheme(): string
     {
         return $this->scheme;
@@ -140,6 +167,8 @@ class Uri
      * Returns the userInfo as a string.
      *
      * It could be in "user:pass" or "user" form.
+     *
+     * @psalm-mutation-free
      */
     public function getUserinfo(): UserInfo
     {
@@ -150,6 +179,8 @@ class Uri
      * Returns the host as a string.
      *
      * It could be in "hostname:port" or "hostname" form.
+     *
+     * @psalm-mutation-free
      */
     public function getHost(): string
     {
@@ -162,6 +193,8 @@ class Uri
      * For the raw, non-decoded path use:
      *
      * @see Uri::getRawPath()
+     *
+     * @psalm-mutation-free
      */
     public function getPath(): string
     {
@@ -170,6 +203,8 @@ class Uri
 
     /**
      * Returns the raw path or the decoded path otherwise.
+     *
+     * @psalm-mutation-free
      */
     public function getRawPath(): string
     {
@@ -191,6 +226,8 @@ class Uri
      *
      * @see Query::decode()
      * @see Query::encode()
+     *
+     * @psalm-mutation-free
      */
     public function getRawQuery(): string
     {
@@ -203,6 +240,8 @@ class Uri
      * For the raw, non-decoded fragment use:
      *
      * @see Uri::getRawFragment()
+     *
+     * @psalm-mutation-free
      */
     public function getFragment(): string
     {
@@ -211,6 +250,8 @@ class Uri
 
     /**
      * Returns the raw fragment or the decoded fragment otherwise.
+     *
+     * @psalm-mutation-free
      */
     public function getRawFragment(): string
     {
@@ -230,10 +271,10 @@ class Uri
      */
     public function withScheme(string $scheme): static
     {
-        $clone = clone $this;
-        $clone->scheme = $scheme;
+        $copy = clone $this;
+        $copy->scheme = $scheme;
 
-        return $clone;
+        return $copy;
     }
 
     /**
@@ -243,10 +284,10 @@ class Uri
      */
     public function withUserinfo(UserInfo $userinfo): static
     {
-        $clone = clone $this;
-        $clone->userinfo = $userinfo;
+        $copy = clone $this;
+        $copy->userinfo = $userinfo;
 
-        return $clone;
+        return $copy;
     }
 
     /**
@@ -256,10 +297,10 @@ class Uri
      */
     public function withHost(string $host): static
     {
-        $clone = clone $this;
-        $clone->host = $host;
+        $copy = clone $this;
+        $copy->host = $host;
 
-        return $clone;
+        return $copy;
     }
 
     /**
@@ -271,15 +312,15 @@ class Uri
      */
     public function withPath(string $rawPath): static
     {
-        $clone = clone $this;
-        $clone->path = rawurldecode($rawPath);
-        $clone->rawPath = $rawPath;
+        $copy = clone $this;
+        $copy->path = \rawurldecode($rawPath);
+        $copy->rawPath = $rawPath;
 
-        if ($clone->path === $clone->rawPath) {
-            $clone->rawPath = '';
+        if ($copy->path === $copy->rawPath) {
+            $copy->rawPath = '';
         }
 
-        return $clone;
+        return $copy;
     }
 
     /**
@@ -299,10 +340,10 @@ class Uri
      */
     public function withRawQuery(string $rawQuery): static
     {
-        $clone = clone $this;
-        $clone->rawQuery = $rawQuery;
+        $copy = clone $this;
+        $copy->rawQuery = $rawQuery;
 
-        return $clone;
+        return $copy;
     }
 
     /**
@@ -314,21 +355,23 @@ class Uri
      */
     public function withFragment(string $rawFragment): static
     {
-        $clone = clone $this;
-        $clone->fragment = rawurldecode($rawFragment);
-        $clone->rawFragment = $rawFragment;
+        $copy = clone $this;
+        $copy->fragment = \rawurldecode($rawFragment);
+        $copy->rawFragment = $rawFragment;
 
-        if ($clone->rawFragment === $clone->fragment) {
-            $clone->rawFragment = '';
+        if ($copy->rawFragment === $copy->fragment) {
+            $copy->rawFragment = '';
         }
 
-        return $clone;
+        return $copy;
     }
 
     /**
      * Returns true if the URI is opaque, or false otherwise.
      *
      * An opaque URI is a URI without authority.
+     *
+     * @psalm-mutation-free
      */
     public function isOpaque(): bool
     {
@@ -339,6 +382,8 @@ class Uri
      * Returns true if the URI is absolute, or false otherwise.
      *
      * An absolute URI is a URI that has a scheme.
+     *
+     * @psalm-mutation-free
      */
     public function isAbsolute(): bool
     {
@@ -349,6 +394,8 @@ class Uri
      * Returns the URI authority as a string.
      *
      * The authority DOES NOT contain the forward slash pair "//".
+     *
+     * @psalm-mutation-free
      */
     public function getAuthority(): string
     {
@@ -367,35 +414,37 @@ class Uri
      */
     public function getHostname(): string
     {
-        if ('' == $this->host) {
+        if ('' === $this->host) {
             return $this->host;
         }
 
-        $sep = strpos($this->host, ':');
+        $sep = \strpos($this->host, ':');
         if (false === $sep) {
             return $this->host;
         }
 
-        return substr($this->host, 0, $sep);
+        return \substr($this->host, 0, $sep);
     }
 
     /**
      * Returns the port of the URI as a string.
      *
      * If no port was specified, an empty string is returned.
+     *
+     * @psalm-mutation-free
      */
     public function getPort(): string
     {
-        if ('' == $this->host) {
+        if ('' === $this->host) {
             return $this->host;
         }
 
-        $sep = strpos($this->host, ':');
+        $sep = \strpos($this->host, ':');
         if (false === $sep) {
             return '';
         }
 
-        return substr($this->host, $sep + 1);
+        return \substr($this->host, $sep + 1);
     }
 
     /**
@@ -404,6 +453,8 @@ class Uri
      * If the port is not specified, -1 is returned, which is an invalid port.
      *
      * The zero port, although unusable, has a special meaning in system calls.
+     *
+     * @psalm-mutation-free
      */
     public function getPortNumber(): int
     {
@@ -460,17 +511,81 @@ class Uri
     }
 
     /**
+     * @psalm-mutation-free
+     */
+    public function jsonSerialize(): string
+    {
+        return $this->toString();
+    }
+
+    /**
      * Returns true if two URIs are equal, or false otherwise.
+     *
+     * @psalm-mutation-free
      */
     public function equals(Uri $uri): bool
     {
-        return $this->scheme == $uri->scheme
+        return $this->scheme === $uri->scheme
             && $this->userinfo->toString() === $uri->userinfo->toString()
-            && $this->host == $uri->host
+            && $this->host === $uri->host
             && $this->path === $uri->path
             && $this->rawPath === $uri->rawPath
             && $this->rawQuery === $uri->rawQuery
             && $this->fragment === $uri->fragment
             && $this->rawFragment === $uri->rawFragment;
+    }
+
+    /**
+     * Returns an exact copy of this uri.
+     *
+     * @psalm-mutation-free
+     */
+    public function copy(): static
+    {
+        return clone $this;
+    }
+
+    /**
+     * Resolves a Uri according to RFC 3986 Section 5.
+     *
+     * @param Uri $ref The uri reference
+     *
+     * @return Uri
+     */
+    public function resolve(Uri $ref): static
+    {
+        $copy = clone $ref;
+
+        if ('' === $ref->scheme) {
+            $copy->scheme = $this->scheme;
+        }
+
+        if ('' !== $ref->scheme || '' !== $ref->host || !$ref->userinfo->isEmpty()) {
+            $copy->path = Uri\resolvePath($ref->getPath(), '');
+
+            return $copy;
+        }
+
+        if ($ref->isOpaque() && '' !== $ref->getPath()) {
+            $copy->userinfo = UserInfo::create('');
+            $copy->host = '';
+            $copy->path = '';
+
+            return $copy;
+        }
+
+        if ('' === $ref->path && '' === $ref->rawQuery) {
+            $copy->rawQuery = $this->rawQuery;
+            if ('' === $ref->fragment) {
+                $copy->fragment = $this->fragment;
+                $copy->rawFragment = $this->rawFragment;
+            }
+        }
+
+        $copy->host = $this->host;
+        $copy->userinfo = clone $this->userinfo;
+        $copy->path = Uri\resolvePath($this->getPath(), $ref->getPath());
+
+        return $copy;
     }
 }

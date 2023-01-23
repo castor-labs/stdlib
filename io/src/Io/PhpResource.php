@@ -63,7 +63,7 @@ abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, 
             throw new Error('The underlying resource has been detached');
         }
 
-        fclose($this->resource);
+        \fclose($this->resource);
         $this->flags += self::FLAG_CLOSED;
     }
 
@@ -78,18 +78,18 @@ abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, 
             throw new Error('The underlying resource is not readable');
         }
 
-        if (feof($this->resource)) {
+        if (\feof($this->resource)) {
             throw new EndOfFile('End of file before read');
         }
 
-        $bytes = fread($this->resource, $length);
+        $bytes = \fread($this->resource, $length);
 
         // This catches eof for streams where is detected after a read, like network streams
-        if (0 !== $length && ('' === $bytes || false === $bytes) && feof($this->resource)) {
+        if (0 !== $length && ('' === $bytes || false === $bytes) && \feof($this->resource)) {
             throw new EndOfFile('End of file after read');
         }
 
-        if (!is_string($bytes)) {
+        if (!\is_string($bytes)) {
             throw new Error('Unknown error while reading bytes');
         }
 
@@ -117,7 +117,7 @@ abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, 
             throw new Error('Underlying stream is not seekable');
         }
 
-        return fseek($this->resource, $offset, $whence);
+        return \fseek($this->resource, $offset, $whence);
     }
 
     /**
@@ -131,9 +131,9 @@ abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, 
             throw new Error('Underlying stream is not writable');
         }
 
-        $int = fwrite($this->resource, $bytes);
+        $int = \fwrite($this->resource, $bytes);
 
-        if (!is_int($int)) {
+        if (!\is_int($int)) {
             throw new Error('Unknown error while writing bytes');
         }
 
@@ -157,7 +157,7 @@ abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, 
     {
         $this->ensureResource();
 
-        if (!fflush($this->resource)) {
+        if (!\fflush($this->resource)) {
             throw new Error('Error while flushing buffer');
         }
     }
@@ -202,12 +202,12 @@ abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, 
      */
     protected static function make($resource): static
     {
-        if (!is_resource($resource)) {
+        if (!\is_resource($resource)) {
             throw new \InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'Argument 1 passed to %s must be a resource, %s given',
                     __METHOD__,
-                    gettype($resource)
+                    \gettype($resource)
                 )
             );
         }

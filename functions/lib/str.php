@@ -18,24 +18,38 @@ namespace Castor\Str;
 
 use Castor\Bytes;
 
+use function trim as native_trim;
+
 const TITLE_SEPARATORS = " \t\r\n\f\v";
 const TRIM_CHARS = " \t\n\r\0\x0B";
 
+/**
+ * @psalm-pure
+ */
 function format(string $format, mixed ...$values): string
 {
     return \sprintf($format, ...$values);
 }
 
+/**
+ * @psalm-pure
+ */
 function toUpper(string $string): string
 {
     return \strtoupper($string);
 }
 
+/**
+ * @psalm-pure
+ */
 function toLower(string $string): string
 {
     return \strtolower($string);
 }
 
+/**
+ * @psalm-pure
+ */
 function toTitle(string $string, string $separators = TITLE_SEPARATORS): string
 {
     return \ucwords($string, $separators);
@@ -45,6 +59,8 @@ function toTitle(string $string, string $separators = TITLE_SEPARATORS): string
  * @param string $string  The string to perform the replacements in
  * @param string $search  The string to search
  * @param string $replace The replacement string
+ *
+ * @psalm-pure
  */
 function replace(string $string, string $search, string $replace): string
 {
@@ -55,6 +71,8 @@ function replace(string $string, string $search, string $replace): string
  * Returns the index where the first occurrence of a substring starts.
  *
  * Returns -1 if the substring is not found
+ *
+ * @psalm-pure
  */
 function index(string $string, string $substring): int
 {
@@ -66,15 +84,20 @@ function index(string $string, string $substring): int
     return $pos;
 }
 
+/**
+ * @psalm-pure
+ */
 function trim(string $string, string $chars = TRIM_CHARS): string
 {
-    return \trim($string, $chars);
+    return native_trim($string, $chars);
 }
 
 /**
  * Splits a string into parts by the separator.
  *
  * @return string[]
+ *
+ * @psalm-pure
  */
 function split(string $string, string $separator = ' ', int $limit = null): array
 {
@@ -87,6 +110,8 @@ function split(string $string, string $separator = ' ', int $limit = null): arra
 
 /**
  * Takes a slice from a string.
+ *
+ * @psalm-pure
  */
 function slice(string $string, int $offset, int $size = 0): string
 {
@@ -99,6 +124,8 @@ function slice(string $string, int $offset, int $size = 0): string
 
 /**
  * @param string[] $array
+ *
+ * @psalm-pure
  */
 function join(array $array, string $glue = ''): string
 {
@@ -111,6 +138,8 @@ function join(array $array, string $glue = ''): string
  * The substring is not included in the result
  *
  * @return array{0: string, 1: string, 2: bool}
+ *
+ * @psalm-pure
  */
 function cut(string $string, string $substring): array
 {
@@ -128,6 +157,9 @@ function cut(string $string, string $substring): array
     ];
 }
 
+/**
+ * @psalm-pure
+ */
 function contains(string $string, string $substring): bool
 {
     return \str_contains($string, $substring);

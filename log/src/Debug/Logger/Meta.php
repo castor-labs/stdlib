@@ -55,7 +55,7 @@ class Meta
      */
     public function merge(array $values): void
     {
-        $this->data = array_merge_recursive($this->data, $values);
+        $this->data = \array_merge_recursive($this->data, $values);
     }
 
     public function add(string $key, mixed $value): void

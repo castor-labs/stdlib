@@ -17,21 +17,21 @@ declare(strict_types=1);
 namespace Castor\Net\Http;
 
 /**
- * TLS Configuration for the StreamTransport.
+ * TLSConfig Configuration for the StreamTransport.
  */
-class TLS
+class TLSConfig
 {
     public function __construct(
-        private readonly bool $verify = true,
-        private readonly bool $verifyPeerName = true,
-        private readonly bool $allowSelfSigned = false,
-        private readonly string $caFile = '',
-        private readonly string $caPath = '',
-        private readonly string $certificate = '',
-        private readonly string $privateKey = '',
-        private readonly string $passphrase = '',
-        private readonly int $verifyDepth = 0,
-        private readonly string $cyphers = 'DEFAULT',
+        public readonly bool $verify = true,
+        public readonly bool $verifyPeerName = true,
+        public readonly bool $allowSelfSigned = false,
+        public readonly string $caFile = '',
+        public readonly string $caPath = '',
+        public readonly string $certificate = '',
+        public readonly string $privateKey = '',
+        public readonly string $passphrase = '',
+        public readonly int $verifyDepth = 0,
+        public readonly string $cyphers = 'DEFAULT',
     ) {
     }
 

@@ -26,6 +26,8 @@ class InvariantViolation extends \RuntimeException
 
 /**
  * @throws InvariantViolation if the invariant fails
+ *
+ * @psalm-pure
  */
 function invariant(bool $test, string $message, mixed ...$args): void
 {

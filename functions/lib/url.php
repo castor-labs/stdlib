@@ -14,12 +14,20 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Bytes;
+namespace Castor\Encoding\Url;
 
 /**
  * @psalm-pure
  */
-function len(string $bytes): int
+function decode(string $string): string
 {
-    return \strlen($bytes);
+    return \urldecode($string);
+}
+
+/**
+ * @psalm-pure
+ */
+function encode(mixed $string): string
+{
+    return \urlencode($string);
 }

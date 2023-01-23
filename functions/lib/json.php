@@ -16,40 +16,40 @@ declare(strict_types=1);
 
 namespace Castor\Encoding\Json;
 
-use Castor\Encoding\EncodingInputError;
+use Castor\Encoding\InputError;
 
 /**
- * @throws EncodingInputError
+ * @throws InputError
  */
 function decode(string $json): array
 {
     try {
         return \json_decode($json, true, 512, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_IGNORE);
     } catch (\JsonException $e) {
-        throw new EncodingInputError('Could not decode json', 0, $e);
+        throw new InputError('Could not decode json', 0, $e);
     }
 }
 
 /**
- * @throws EncodingInputError
+ * @throws InputError
  */
 function encodePretty(mixed $json): string
 {
     try {
         return \json_encode($json, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     } catch (\JsonException $e) {
-        throw new EncodingInputError('Could not encode json', 0, $e);
+        throw new InputError('Could not encode json', 0, $e);
     }
 }
 
 /**
- * @throws EncodingInputError
+ * @throws InputError
  */
 function encode(mixed $json): string
 {
     try {
         return \json_encode($json, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
     } catch (\JsonException $e) {
-        throw new EncodingInputError('Could not encode json', 0, $e);
+        throw new InputError('Could not encode json', 0, $e);
     }
 }

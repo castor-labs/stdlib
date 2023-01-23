@@ -45,7 +45,7 @@ class Response implements WriterTo
     public function writeTo(Writer $writer): int
     {
         $written = 0;
-        $written += $writer->write(sprintf(
+        $written += $writer->write(\sprintf(
             '%s %s %s%s',
             $this->version->value,
             $this->status->value,

@@ -17,9 +17,13 @@ declare(strict_types=1);
 namespace Castor\Net\Http;
 
 use Castor\Arr;
+use Castor\Net;
 use Castor\Str;
 
-class Cookies
+/**
+ * Cookies is an indexed collection of Cookie instances.
+ */
+class Cookies implements \Countable
 {
     final public const COOKIE_HEADER = 'Cookie';
     final public const SET_COOKIE_HEADER = 'Set-Cookie';
@@ -29,6 +33,9 @@ class Cookies
      */
     private array $cookies;
 
+    /**
+     * @psalm-external-mutation-free
+     */
     private function __construct()
     {
         $this->cookies = [];
@@ -38,6 +45,8 @@ class Cookies
      * Parses the cookies from the Set-Cookie header.
      *
      * This method is usually used with the headers of a Response or a ResponseWriter.
+     *
+     * @psalm-external-mutation-free
      */
     public static function fromSetCookieHeader(Headers $headers): static
     {
@@ -47,20 +56,25 @@ class Cookies
         return static::create(...$cookies);
     }
 
+    /**
+     * @psalm-external-mutation-free
+     */
     public static function create(Cookie ...$cookies): static
     {
-        $jar = new static();
+        $self = new static();
         foreach ($cookies as $cookie) {
-            $jar->cookies[$cookie->name] = $cookie;
+            $self = $self->with($cookie);
         }
 
-        return $jar;
+        return $self;
     }
 
     /**
      * Parses the cookies from the Cookie header.
      *
      * This method is usually used with the headers of a Request
+     *
+     * @psalm-external-mutation-free
      */
     public static function fromCookieHeader(Headers $headers): static
     {
@@ -70,16 +84,33 @@ class Cookies
         return static::create(...$cookies);
     }
 
+    /**
+     * Returns a cookie from the cookie collection.
+     *
+     * If the cookie does not exist inside the collection, it returns a newly created cookie with the passed name.
+     *
+     * The newly created cookie IS NOT stored in the internal collection.
+     *
+     * @psalm-mutation-free
+     */
     public function get(string $name): Cookie
     {
         return $this->lookup($name) ?? new Cookie($name);
     }
 
+    /**
+     * Looks up for a cookie and returns it if found. Otherwise, returns null.
+     *
+     * @psalm-mutation-free
+     */
     public function lookup(string $name): ?Cookie
     {
         return $this->cookies[$name] ?? null;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function has(string $name): bool
     {
         return \array_key_exists($name, $this->cookies);
@@ -87,12 +118,19 @@ class Cookies
 
     /**
      * @return Cookie[]
+     *
+     * @psalm-mutation-free
      */
-    public function all(): array
+    public function toArray(): array
     {
-        return \array_values($this->cookies);
+        return Arr\values($this->cookies);
     }
 
+    /**
+     * @return $this
+     *
+     * @psalm-external-mutation-free
+     */
     public function with(Cookie $cookie): static
     {
         $clone = clone $this;
@@ -101,6 +139,11 @@ class Cookies
         return $clone;
     }
 
+    /**
+     * @return $this
+     *
+     * @psalm-external-mutation-free
+     */
     public function without(string $name): static
     {
         $clone = clone $this;
@@ -124,18 +167,28 @@ class Cookies
     {
         $headers->del(self::SET_COOKIE_HEADER);
         foreach ($this->cookies as $cookie) {
-            setcookie($headers, $cookie);
+            Net\Http\setCookie($headers, $cookie);
         }
     }
 
     /**
      * Writes the cookies into the Cookie header.
      *
-     * This method is usually called on the headers of a Request
+     * This method is usually called on the headers of a Request.
+     *
+     * It will silently ignore cookies without a name
      */
     public function writeCookie(Headers $headers): void
     {
-        $string = Str\join(Arr\map($this->cookies, static fn (Cookie $c) => $c->toCookieString()), '; ');
+        $string = Str\join(Arr\filter(Arr\map($this->cookies, static fn (Cookie $c) => $c->toCookieString())), '; ');
         $headers->set(self::COOKIE_HEADER, $string);
+    }
+
+    /**
+     * @psalm-mutation-free
+     */
+    public function count(): int
+    {
+        return \count($this->cookies);
     }
 }

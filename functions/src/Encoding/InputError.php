@@ -14,12 +14,8 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Bytes;
+namespace Castor\Encoding;
 
-/**
- * @psalm-pure
- */
-function len(string $bytes): int
+class InputError extends \Exception
 {
-    return \strlen($bytes);
 }

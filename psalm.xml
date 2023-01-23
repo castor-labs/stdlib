@@ -7,12 +7,18 @@
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
+        <directory name="console/src" />
         <directory name="context/src" />
         <directory name="functions/lib" />
+        <directory name="functions/src" />
+        <directory name="http/src" />
         <directory name="http-cgi-server/src" />
         <directory name="http-client/src" />
-        <directory name="http/src" />
         <directory name="io/src" />
+        <directory name="log/src" />
+        <directory name="os/src" />
+        <directory name="random/src" />
+        <directory name="time/src" />
         <directory name="uri/src" />
         <ignoreFiles>
             <directory name="vendor" />

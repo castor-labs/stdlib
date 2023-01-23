@@ -154,7 +154,7 @@ class Status
 
     public static function make(int $status, string $phrase = ''): Status
     {
-        $phrase = strtoupper($phrase);
+        $phrase = \strtoupper($phrase);
         if ('' === $phrase) {
             $phrase = self::$statusPhraseMap[$status] ?? 'UNKNOWN';
         }
@@ -166,7 +166,7 @@ class Status
     {
         $phrase = self::$statusPhraseMap[$status] ?? 'Non Standard';
 
-        return new self($status, strtoupper($phrase));
+        return new self($status, \strtoupper($phrase));
     }
 
     public function isClientError(): bool

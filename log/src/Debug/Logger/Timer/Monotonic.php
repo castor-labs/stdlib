@@ -17,15 +17,14 @@ declare(strict_types=1);
 namespace Castor\Debug\Logger\Timer;
 
 use Castor\Debug\Logger\Timer;
-use Castor\Time;
 use Castor\Time\Clock;
 
 final class Monotonic implements Timer
 {
-    private Time $start;
+    private \DateTimeImmutable $start;
     private Clock $clock;
 
-    public function __construct(Time $start, Clock $clock)
+    public function __construct(\DateTimeImmutable $start, Clock $clock)
     {
         $this->start = $start;
         $this->clock = $clock;
@@ -45,6 +44,6 @@ final class Monotonic implements Timer
 
         $offset = $now - $start;
 
-        return str_pad((string) $offset, 10, '0', STR_PAD_LEFT);
+        return \str_pad((string) $offset, 10, '0', STR_PAD_LEFT);
     }
 }

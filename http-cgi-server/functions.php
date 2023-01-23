@@ -114,16 +114,16 @@ const CTX_PARSED_BODY = 'http.cgi.parsed_body';
 function parseRequest(Context &$ctx): Request
 {
     $server = $_SERVER;
-    if (!array_key_exists('REQUEST_METHOD', $server)) {
+    if (!\array_key_exists('REQUEST_METHOD', $server)) {
         $server['REQUEST_METHOD'] = 'GET';
     }
 
     $method = Method::from($server['REQUEST_METHOD'] ?? throw new \RuntimeException('Could not determine HTTP method'));
-    $headers = \function_exists('getallheaders') ? Headers::fromMap(getallheaders()) : parseHeaders($server);
+    $headers = \function_exists('getallheaders') ? Headers::fromMap(\getallheaders()) : parseHeaders($server);
 
     if (Method::POST === $method) {
         $contentType = $headers->get('Content-Type');
-        if (in_array(explode(';', $contentType), ['application/x-www-form-urlencoded', 'multipart/form-data'])) {
+        if (\in_array(\explode(';', $contentType), ['application/x-www-form-urlencoded', 'multipart/form-data'])) {
             $ctx = Context\withValue($ctx, CTX_PARSED_BODY, $_POST);
         }
     }
@@ -151,14 +151,14 @@ function parseHeaders(array $server = []): Headers
             continue;
         }
 
-        if (str_starts_with($key, 'HTTP_')) {
+        if (\str_starts_with($key, 'HTTP_')) {
             $name = Str\replace(Str\slice($key, 5), '_', '-');
             $headers->set($name, $value);
 
             continue;
         }
 
-        if (str_starts_with($key, 'CONTENT_')) {
+        if (\str_starts_with($key, 'CONTENT_')) {
             $name = 'content-'.Str\slice($key, 8);
             $headers->set($name, $value);
         }

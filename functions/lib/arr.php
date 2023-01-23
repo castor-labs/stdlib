@@ -16,22 +16,68 @@ declare(strict_types=1);
 
 namespace Castor\Arr;
 
-function map(array $array, callable $func): array
+/**
+ * @psalm-suppress ImpureFunctionCall
+ *
+ * @see https://github.com/vimeo/psalm/issues/2112
+ *
+ * @psalm-pure
+ */
+function map(array $array, \Closure $func): array
 {
     return \array_map($func, $array);
 }
 
-function filter(array $array, callable $func = null): array
+/**
+ * @psalm-suppress ImpureFunctionCall
+ *
+ * @see https://github.com/vimeo/psalm/issues/2112
+ *
+ * @psalm-pure
+ */
+function filter(array $array, \Closure $func = null): array
 {
     return \array_filter($array, $func);
 }
 
+/**
+ * @psalm-pure
+ */
 function push(array &$array, mixed $element): int
 {
     return \array_push($array, $element);
 }
 
+/**
+ * @psalm-pure
+ */
 function reverse(array $array): array
 {
     return \array_reverse($array);
+}
+
+/**
+ * @return null|mixed
+ */
+function shift(array &$array): mixed
+{
+    return \array_shift($array);
+}
+
+/**
+ * @return list<mixed>
+ *
+ * @psalm-pure
+ */
+function values(array $array): array
+{
+    return \array_values($array);
+}
+
+/**
+ * @psalm-pure
+ */
+function contains(array $array, mixed $value): bool
+{
+    return \in_array($value, $array, true);
 }

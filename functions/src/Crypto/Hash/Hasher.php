@@ -14,12 +14,21 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Bytes;
+namespace Castor\Crypto\Hash;
 
-/**
- * @psalm-pure
- */
-function len(string $bytes): int
+use Castor\Io\Writer;
+
+interface Hasher extends Writer
 {
-    return \strlen($bytes);
+    /**
+     * Returns the hash as a binary string.
+     */
+    public function hash(string $bytes = ''): string;
+
+    /**
+     * Returns the hash as a hexadecimal string.
+     */
+    public function hashHex(string $bytes = ''): string;
+
+    public function reset(): void;
 }

@@ -14,8 +14,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Encoding;
+namespace Castor\Net\Uri;
 
-class EncodingInputError extends \Exception
+/**
+ * resolvePath applies special path segments from refs and applies
+ * them to base, per RFC 3986.
+ *
+ * @psalm-pure
+ */
+function resolvePath(string $base, string $ref): string
 {
+    // TODO: https://cs.opensource.google/go/go/+/refs/tags/go1.19.5:src/net/url/url.go;drc=ba913774543d7388b7bb1843fc7c1b935aebedda;l=995
+    throw new \LogicException('Not Implemented');
 }

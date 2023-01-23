@@ -34,7 +34,7 @@ final class ResponseWriter extends Io\PhpResource implements IResponseWriter
 
     public static function create(): ResponseWriter
     {
-        $writer = self::make(fopen('php://output', 'wb'));
+        $writer = self::make(\fopen('php://output', 'wb'));
         $writer->headers = new Headers();
         $writer->sentHeaders = false;
 
@@ -61,7 +61,7 @@ final class ResponseWriter extends Io\PhpResource implements IResponseWriter
         }
 
         foreach ($this->headers as $name => $value) {
-            header($name.': '.$value, false, $status);
+            \header($name.': '.$value, false, $status);
         }
 
         $this->sentHeaders = true;

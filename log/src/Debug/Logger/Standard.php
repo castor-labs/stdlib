@@ -21,6 +21,7 @@ use Castor\Debug\Logger;
 use Castor\Io\Flusher;
 use Castor\Io\Writer;
 use Castor\Os;
+use Castor\Str;
 use Castor\Time\Clock;
 
 final class Standard implements Logger
@@ -68,7 +69,7 @@ final class Standard implements Logger
             return;
         }
 
-        $header = sprintf(
+        $header = Str\format(
             '%s[%s]',
             $this->levelString($level),
             $this->timer->time(),
@@ -78,7 +79,7 @@ final class Standard implements Logger
 
         $this->normalizeMetadata($level, $parts, Meta\get($ctx)->toArray());
 
-        $this->out->write(implode(' ', $parts).PHP_EOL);
+        $this->out->write(Str\join($parts, ' ').PHP_EOL);
     }
 
     private function levelString(Level $level): string
@@ -106,17 +107,17 @@ final class Standard implements Logger
             }
 
             // We cast it to an array if is an object
-            if (is_object($value)) {
+            if (\is_object($value)) {
                 $value = (array) $value;
             }
 
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $this->normalizeMetadata($level, $kv, $value, $key.'.');
 
                 return;
             }
 
-            $kv[] = sprintf('%s=%s', $this->colorizer->colorize($level, $key), $value);
+            $kv[] = Str\format('%s=%s', $this->colorizer->colorize($level, $key), $value);
         }
     }
 }

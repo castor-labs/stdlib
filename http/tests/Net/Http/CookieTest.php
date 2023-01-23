@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  *
- * @coversNothing
+ * @covers \Castor\Net\Http\Cookie
  */
 class CookieTest extends TestCase
 {
@@ -39,7 +39,38 @@ class CookieTest extends TestCase
         $this->assertSame('6b74cceb75d0ad8a8ca8e57ec82a549c', $cookies[2]->value);
     }
 
-    public function testItParsesEmptyString(): void
+    public function testItParsesSetCookie(): void
+    {
+        $string = 'sess=57c0ed3dcd4767b385d7a240df0b9d8e; Domain=localhost:8000; Secure; HttpOnly';
+        $cookie = Cookie::fromSetCookieString($string);
+
+        $this->assertSame('sess', $cookie->name);
+        $this->assertSame('57c0ed3dcd4767b385d7a240df0b9d8e', $cookie->value);
+        $this->assertSame('localhost:8000', $cookie->domain);
+        $this->assertSame('', $cookie->path);
+        $this->assertTrue($cookie->secure);
+        $this->assertTrue($cookie->httpOnly);
+        $this->assertSame(0, $cookie->maxAge);
+    }
+
+    public function testItFailsToParseEmptySetCookie(): void
+    {
+        $cookie = Cookie::fromSetCookieString('');
+        $this->assertSame('', $cookie->name);
+    }
+
+    public function testItFailsToParseInvalidDateSetCookie(): void
+    {
+        $cookie = Cookie::fromSetCookieString('sess=57c0ed3dcd4767b385d7a240df0b9d8e; Expires=1243243223; Secure; HttpOnly');
+        $this->assertSame('sess', $cookie->name);
+        $this->assertSame('57c0ed3dcd4767b385d7a240df0b9d8e', $cookie->value);
+        $this->assertNull($cookie->expires);
+        $this->assertSame('', $cookie->path);
+        $this->assertTrue($cookie->secure);
+        $this->assertTrue($cookie->httpOnly);
+    }
+
+    public function testItParsesEmptyCookie(): void
     {
         $cookies = Cookie::fromCookieString('');
 

@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  *
- * @coversNothing
+ * @covers \Castor\Net\Http\StreamTransport
  */
 class StreamTransportTest extends TestCase
 {

@@ -40,7 +40,7 @@ class ProtocolError extends \Exception
         $message = 'unexpected status code error';
 
         if ($response->status->isServerError()) {
-            $message = sprintf(
+            $message = \sprintf(
                 'Server (%s) error on %s %s',
                 $response->status->value,
                 $request->method->value,
@@ -49,7 +49,7 @@ class ProtocolError extends \Exception
         }
 
         if ($response->status->isClientError()) {
-            $message = sprintf(
+            $message = \sprintf(
                 'Client (%s) error on %s %s',
                 $response->status->value,
                 $request->method->value,
@@ -58,7 +58,7 @@ class ProtocolError extends \Exception
         }
 
         if ($response->status->isRedirect()) {
-            $message = sprintf(
+            $message = \sprintf(
                 'Unexpected redirect (%s) status on %s %s',
                 $response->status->value,
                 $request->method->value,

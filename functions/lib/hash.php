@@ -16,22 +16,37 @@ declare(strict_types=1);
 
 namespace Castor\Crypto\Hash;
 
+use function md5 as native_md5;
+use function sha1 as native_sha1;
+
+/**
+ * @psalm-pure
+ */
 function md5_hex(string $string): string
 {
-    return \md5($string);
+    return native_md5($string);
 }
 
+/**
+ * @psalm-pure
+ */
 function md5(string $string): string
 {
-    return \md5($string, true);
+    return native_md5($string, true);
 }
 
+/**
+ * @psalm-pure
+ */
 function sha1_hex(string $string): string
 {
-    return \sha1($string);
+    return native_sha1($string);
 }
 
+/**
+ * @psalm-pure
+ */
 function sha1(string $string): string
 {
-    return \sha1($string, true);
+    return native_sha1($string, true);
 }
