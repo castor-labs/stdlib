@@ -250,6 +250,17 @@ class UriTest extends TestCase
         $this->expectException(ParseError::class);
         Uri::parse('///threeslashes');
     }
+    
+    public function testItParsesWeirdHttpUri(): void
+    {
+        $this->testParse('http://http://http://@http://http://?http://#http://', Uri::fromParts(
+            scheme: 'http',
+            userInfo: 'http://http://',
+            host: 'http',
+            port: '',
+            path: '//http://'
+        ));
+    }
 
     /**
      * @throws ParseError
