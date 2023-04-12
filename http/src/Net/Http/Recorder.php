@@ -36,7 +36,7 @@ final class Recorder implements ResponseWriter
     public function __construct(
         private readonly Headers $headers,
         private readonly Reader&Writer&Closer $body,
-        private readonly ?Status $status = null,
+        private ?Status $status = null,
     ) {
     }
 
@@ -58,6 +58,8 @@ final class Recorder implements ResponseWriter
         if (null !== $this->status) {
             throw new Error('Headers and status code has already been sent');
         }
+
+        $this->status = Status::fromInt($status);
     }
 
     public function write(string $bytes): int
