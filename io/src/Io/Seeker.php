@@ -22,7 +22,7 @@ namespace Castor\Io;
 interface Seeker
 {
     /**
-     * Seeks a bytes source to an specific position.
+     * Seeks a bytes source to a specific position.
      *
      * Calling seek with no arguments will return the current cursor position.
      *

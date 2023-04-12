@@ -29,7 +29,7 @@ class Response implements WriterTo
     public Headers $headers;
     public Reader&Closer $body;
 
-    protected function __construct(Version $version, Status $status, Headers $headers, Reader&Closer $body)
+    public function __construct(Version $version, Status $status, Headers $headers, Reader&Closer $body)
     {
         $this->version = $version;
         $this->status = $status;
@@ -37,9 +37,9 @@ class Response implements WriterTo
         $this->body = $body;
     }
 
-    public static function create(int $status = 200, Reader&Closer $body = new NoBody()): Response
+    public static function create(int $status = 200, Reader&Closer $body = new NoBody(), Headers $headers = new Headers()): Response
     {
-        return new self(Version::HTTP11, Status::fromInt($status), new Headers(), $body);
+        return new self(Version::HTTP11, Status::fromInt($status), $headers, $body);
     }
 
     public function writeTo(Writer $writer): int

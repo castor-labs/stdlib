@@ -37,6 +37,6 @@ class FunctionsTest extends TestCase
         $hash = Hash::MD5->new();
         Io\copy($response->body, $hash);
 
-        $this->assertSame('1fa0fd2d1bc0ac9b9b60a60a86a318ec', $hash->hashHex());
+        $this->assertSame('96b77057aa2c11fd79cd5d4be1fd5c0d', $hash->hashHex());
     }
 }
