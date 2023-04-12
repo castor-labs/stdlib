@@ -54,7 +54,7 @@ function stdin(): Reader
 
 function lookupEnv(string $env): ?string
 {
-    $string = getenv($env);
+    $string = \getenv($env);
     if (\is_string($string)) {
         return $string;
     }
