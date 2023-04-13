@@ -60,8 +60,7 @@ function lastReplace(string $substring, string $replacement, string $class = \Ru
 function collect(\Throwable $e): array
 {
     $errors = [];
-    $t = $e;
-    while ($t instanceof \Throwable) {
+    while ($e instanceof \Throwable) {
         $errors[] = [
             'type' => \gettype($e),
             'message' => $e->getMessage(),
@@ -70,7 +69,7 @@ function collect(\Throwable $e): array
             'line' => $e->getLine(),
         ];
 
-        $t = $t->getPrevious();
+        $e = $e->getPrevious();
     }
 
     return $errors;
