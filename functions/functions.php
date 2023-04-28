@@ -30,6 +30,8 @@ require_once __DIR__.'/lib/hex.php';
 
 require_once __DIR__.'/lib/json.php';
 
+require_once __DIR__.'/lib/obj.php';
+
 require_once __DIR__.'/lib/os.path.php';
 
 require_once __DIR__.'/lib/runtime.php';
