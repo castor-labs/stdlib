@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+set -e
+
+COMPOSE=${COMPOSE_CMD:-docker compose}
+CMD=$1
+SDK=$0
+
+function compose() {
+    $COMPOSE "$@"
+}
+
+function sdk() {
+    $SDK "$@"
+}
+
+function stack_build() {
+    compose build --no-cache --pull
+}
+
+function stack_exec() {
+    compose exec "$@"
+}
+
+function stack_run() {
+    compose run --rm "$@"
+}
+
+function stack_boot() {
+    compose up --remove-orphans --wait
+}
+
+function stack_destroy() {
+    compose down
+}
+
+function stack_stop() {
+    compose stop
+}
+
+function stack_start() {
+    compose start
+}
+
+function install_dependencies() {
+    stack_run main composer install
+}
+
+function test() {
+    stack_exec main vendor/bin/phpunit
+}
+
+function static_analysis() {
+    stack_exec main vendor/bin/psalm --stats --no-cache --show-info=true
+}
+
+function code_style_check() {
+    stack_exec main vendor/bin/php-cs-fixer fix --dry-run -v
+}
+
+function code_style_fix() {
+    stack_exec main vendor/bin/php-cs-fixer fix
+}
+
+shift
+
+case $CMD in
+  'setup')
+    stack_build
+    install_dependencies
+    stack_boot
+    echo ""
+    echo "Ready for development!"
+  ;;
+  'compose')
+    compose "$@"
+  ;;
+  'reset')
+    stack_destroy
+    install_dependencies
+    stack_boot
+  ;;
+  'composer')
+    stack_exec app composer "$@"
+  ;;
+  'fmt')
+    code_style_fix
+  ;;
+  'analyze')
+    static_analysis
+  ;;
+  'test')
+    test
+  ;;
+  'shell')
+    stack_exec main ash
+  ;;
+  'pr')
+    code_style_fix
+    static_analysis
+    test
+  ;;
+  '')
+    echo "You must specify a command"
+  ;;
+  *)
+    echo "Command $CMD is not valid"
+  ;;
+esac

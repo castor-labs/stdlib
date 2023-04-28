@@ -65,6 +65,8 @@ function shift(array &$array): mixed
 }
 
 /**
+ * Creates an array from the values of $array.
+ *
  * @return list<mixed>
  *
  * @psalm-pure
@@ -72,6 +74,30 @@ function shift(array &$array): mixed
 function values(array $array): array
 {
     return \array_values($array);
+}
+
+/**
+ * Creates an array from the keys of $array.
+ *
+ * @return list<array-key>
+ *
+ * @psalm-pure
+ */
+function keys(array $array): array
+{
+    return \array_keys($array);
+}
+
+/**
+ * Creates an array with $n elements of the given $value.
+ *
+ * @return list<mixed>
+ *
+ * @psalm-pure
+ */
+function fill(int $n, mixed $value): array
+{
+    return \array_fill(0, $n, $value);
 }
 
 /**

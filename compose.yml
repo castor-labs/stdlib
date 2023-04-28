@@ -4,13 +4,12 @@ name: "castor-stdlib"
 
 services:
 
-  lib:
+  main:
     image: castor/stdlib:dev
     build:
       context: ./.castor/docker
       dockerfile: ./lib/Dockerfile
       target: dev
-    container_name: lib.castor-stdlib.dev
     volumes:
       - ./:/castor/lib
     user: ${UID:-1000}
