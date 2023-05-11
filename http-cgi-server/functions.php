@@ -77,34 +77,6 @@ function serve(Context $ctx, Handler $handler, Logger $logger = null, bool $catc
 }
 
 /**
- * Returns the parsed body of the request.
- */
-function getParsedBody(Context $ctx): array
-{
-    return $ctx->value(CTX_PARSED_BODY) ?? [];
-}
-
-/**
- * Returns the uploaded files.
- *
- * @return UploadedFile[]
- */
-function getUploadedFiles(Context $ctx): array
-{
-    return $ctx->value(CTX_UPLOADED_FILES) ?? [];
-}
-
-/**
- * @internal
- */
-const CTX_UPLOADED_FILES = 'http.cgi.uploaded_files';
-
-/**
- * @internal
- */
-const CTX_PARSED_BODY = 'http.cgi.parsed_body';
-
-/**
  * Parses the Request from the globals.
  *
  * It mutates the passed context
@@ -113,6 +85,7 @@ const CTX_PARSED_BODY = 'http.cgi.parsed_body';
  */
 function parseRequest(Context &$ctx): Request
 {
+    $ctx = Http\withClientIp($ctx, $_SERVER['REMOTE_ADDR']);
     $server = $_SERVER;
     if (!\array_key_exists('REQUEST_METHOD', $server)) {
         $server['REQUEST_METHOD'] = 'GET';
@@ -124,11 +97,13 @@ function parseRequest(Context &$ctx): Request
     if (Method::POST === $method) {
         $contentType = $headers->get('Content-Type');
         if (\in_array(\explode(';', $contentType), ['application/x-www-form-urlencoded', 'multipart/form-data'])) {
-            $ctx = Context\withValue($ctx, CTX_PARSED_BODY, $_POST);
+            $ctx = withParsedBody($ctx, $_POST);
         }
     }
 
     $ctx = Http\withParsedCookies($ctx, parseCookies($_COOKIE));
+
+    $ctx = withUploadedFiles($ctx, UploadedFile::createFromGlobal($_FILES));
 
     $uri = parseUri($server);
     $version = Version::from($server['SERVER_PROTOCOL'] ?? 'HTTP/1.1');
@@ -231,4 +206,60 @@ function parseCookies(array $cookies = null): Cookies
     }
 
     return Cookies::create(...$parsed);
+}
+
+/**
+ * @internal
+ */
+enum ContextKeys
+{
+    case PARSED_BODY;
+
+    case UPLOADED_FILES;
+}
+
+/**
+ * Stores the parsed body in the context.
+ *
+ * @param array<string,mixed> $body
+ *
+ * @internal
+ */
+function withParsedBody(Context $ctx, array $body): Context
+{
+    return Context\withValue($ctx, ContextKeys::PARSED_BODY, $body);
+}
+
+/**
+ * Returns the parsed body of the request.
+ *
+ * It's usually the value of $_POST
+ *
+ * @return array<string,mixed>
+ */
+function getParsedBody(Context $ctx): array
+{
+    return $ctx->value(ContextKeys::PARSED_BODY) ?? [];
+}
+
+/**
+ * @param array<string,UploadedFile> $files
+ *
+ * @internal
+ */
+function withUploadedFiles(Context $ctx, array $files): Context
+{
+    return Context\withValue($ctx, ContextKeys::UPLOADED_FILES, $files);
+}
+
+/**
+ * Returns the uploaded files.
+ *
+ * It's usually the value of $_FILES but parsed into an UploadedFile
+ *
+ * @return array<string,UploadedFile>
+ */
+function getUploadedFiles(Context $ctx): array
+{
+    return $ctx->value(ContextKeys::UPLOADED_FILES) ?? [];
 }

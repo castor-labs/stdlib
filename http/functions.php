@@ -21,14 +21,19 @@ use Castor\Context;
 /**
  * @internal
  */
-const CTX_PARSED_COOKIES = 'http.parsed_cookies';
+enum ContextKeys
+{
+    case PARSED_COOKIES;
+
+    case CLIENT_IP;
+}
 
 /**
  * Stores parsed cookies in the context.
  */
 function withParsedCookies(Context $ctx, Cookies $cookies): Context
 {
-    return Context\withValue($ctx, CTX_PARSED_COOKIES, $cookies);
+    return Context\withValue($ctx, ContextKeys::PARSED_COOKIES, $cookies);
 }
 
 /**
@@ -36,7 +41,25 @@ function withParsedCookies(Context $ctx, Cookies $cookies): Context
  */
 function getParsedCookies(Context $ctx): Cookies
 {
-    return $ctx->value(CTX_PARSED_COOKIES) ?? Cookies::create();
+    return $ctx->value(ContextKeys::PARSED_COOKIES) ?? Cookies::create();
+}
+
+/**
+ * Stores the client IP in the context.
+ */
+function withClientIp(Context $ctx, string $ip): Context
+{
+    return Context\withValue($ctx, ContextKeys::CLIENT_IP, $ip);
+}
+
+/**
+ * Returns the client ip in the context.
+ *
+ * If no IP is found, it returns 0.0.0.0
+ */
+function getClientIp(Context $ctx): string
+{
+    return $ctx->value(ContextKeys::CLIENT_IP) ?? '0.0.0.0';
 }
 
 /**
