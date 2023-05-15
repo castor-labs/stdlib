@@ -94,15 +94,8 @@ function parseRequest(Context &$ctx): Request
     $method = Method::from($server['REQUEST_METHOD'] ?? throw new \RuntimeException('Could not determine HTTP method'));
     $headers = \function_exists('getallheaders') ? Headers::fromMap(\getallheaders()) : parseHeaders($server);
 
-    if (Method::POST === $method) {
-        $contentType = $headers->get('Content-Type');
-        if (\in_array(\explode(';', $contentType), ['application/x-www-form-urlencoded', 'multipart/form-data'])) {
-            $ctx = withParsedBody($ctx, $_POST);
-        }
-    }
-
     $ctx = Http\withParsedCookies($ctx, parseCookies($_COOKIE));
-
+    $ctx = withParsedBody($ctx, $_POST);
     $ctx = withUploadedFiles($ctx, UploadedFile::createFromGlobal($_FILES));
 
     $uri = parseUri($server);
