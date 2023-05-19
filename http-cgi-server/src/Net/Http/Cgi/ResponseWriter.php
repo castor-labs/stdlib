@@ -21,24 +21,24 @@ use Castor\Net\Http\Headers;
 use Castor\Net\Http\ResponseWriter as IResponseWriter;
 
 /**
- * ResponseWriter wraps the PHP CGI Output stream.
+ * ResponseWriter writes to the PHP CGI output.
  *
  * It is an implementation detail of the CGI package
  *
  * @internal
  */
-final class ResponseWriter extends Io\PhpResource implements IResponseWriter
+final class ResponseWriter implements IResponseWriter, Io\Flusher, Io\Closer
 {
-    private Headers $headers;
-    private bool $sentHeaders;
+    private function __construct(
+        private readonly Headers $headers,
+        private bool $sentHeaders = false,
+        private bool $closed = false,
+    ) {
+    }
 
     public static function create(): ResponseWriter
     {
-        $writer = self::make(\fopen('php://output', 'wb'));
-        $writer->headers = new Headers();
-        $writer->sentHeaders = false;
-
-        return $writer;
+        return new self(new Headers());
     }
 
     public function areHeadersSent(): bool
@@ -56,6 +56,10 @@ final class ResponseWriter extends Io\PhpResource implements IResponseWriter
      */
     public function writeHeaders(int $status = 200): void
     {
+        if ($this->closed) {
+            throw new Io\Error('Connection is already closed');
+        }
+
         if ($this->sentHeaders) {
             throw new Io\Error('Headers already sent');
         }
@@ -76,6 +80,35 @@ final class ResponseWriter extends Io\PhpResource implements IResponseWriter
             $this->writeHeaders();
         }
 
-        return parent::write($bytes);
+        if ($this->closed) {
+            throw new Io\Error('Connection is already closed');
+        }
+
+        $len = \strlen($bytes);
+        echo $bytes;
+
+        return $len;
+    }
+
+    public function close(): void
+    {
+        if ($this->closed) {
+            return;
+        }
+
+        if (\function_exists('fastcgi_finish_request')) {
+            \fastcgi_finish_request();
+        }
+        $this->closed = true;
+    }
+
+    public function flush(): void
+    {
+        if ($this->closed) {
+            throw new Io\Error('Connection is already closed');
+        }
+
+        \ob_flush();
+        \flush();
     }
 }

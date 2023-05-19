@@ -30,7 +30,7 @@ use Castor\Context;
  */
 final class Value implements Context
 {
-    private mixed $value;
+    public readonly mixed $value;
 
     public function __construct(mixed $value = null)
     {

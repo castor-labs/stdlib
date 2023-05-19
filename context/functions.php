@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Castor\Context;
 
+use Castor\AlreadyRegistered;
 use Castor\Context;
 
 /**
@@ -32,4 +33,43 @@ function withValue(Context $ctx, mixed $key, mixed $value): Context
 function nil(): Context
 {
     return new Value();
+}
+
+/**
+ * @internal
+ */
+enum Key
+{
+    case CANCEL;
+}
+
+/**
+ * Stores a cancellation signal in the context.
+ *
+ * @param callable():bool $signal
+ *
+ * @throws AlreadyRegistered if the context already contains a cancellation signal
+ */
+function withCancel(Context $ctx, callable $signal): Context
+{
+    if (null !== $ctx->value(Key::CANCEL)) {
+        throw new AlreadyRegistered('This context holds a cancellation signal already');
+    }
+
+    return withValue($ctx, Key::CANCEL, $signal);
+}
+
+/**
+ * Checks whether a context is cancelled.
+ *
+ * By default, if no cancellation callable was stored, the context is not cancelled.
+ */
+function isCancelled(Context $ctx): bool
+{
+    $signal = $ctx->value(Key::CANCEL);
+    if (\is_callable($signal)) {
+        return (bool) $signal();
+    }
+
+    return false;
 }

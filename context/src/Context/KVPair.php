@@ -29,37 +29,16 @@ use Castor\Context;
  *
  * @internal
  */
-final class KVPair implements Context
+final class KVPair extends Decorated
 {
-    private Context $next;
-    private mixed $key;
-    private mixed $value;
+    public readonly mixed $key;
+    public readonly mixed $value;
 
     public function __construct(Context $next, mixed $key, mixed $value)
     {
-        $this->next = $next;
+        parent::__construct($next);
         $this->key = $key;
         $this->value = $value;
-    }
-
-    /**
-     * Returns an array with all the key values stored in the
-     * context chain, as long as is an interrupted chain of
-     * KVPair instances.
-     *
-     * This function should be used for debugging purposes only.
-     *
-     * @return array<array{0: mixed, 1: mixed}>
-     */
-    public static function debug(Context $ctx): array
-    {
-        $chain = [];
-        while ($ctx instanceof self) {
-            $chain[] = [$ctx->key, $ctx->value];
-            $ctx = $ctx->next;
-        }
-
-        return $chain;
     }
 
     /**

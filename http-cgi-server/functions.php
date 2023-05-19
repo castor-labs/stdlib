@@ -43,8 +43,14 @@ use Castor\Str;
  *
  * @throws \Throwable
  */
-function serve(Context $ctx, Handler $handler, Logger $logger = null, bool $catchErrors = false): void
+function serve(Context $ctx, Handler $handler, Logger $logger = null, bool $catchErrors = false, bool $ignoreUserAbort = true): void
 {
+    // This will continue script execution even if the client disconnects
+    \ignore_user_abort($ignoreUserAbort);
+
+    // We pass this cancellation signal so the user can check whether the client disconnected
+    $ctx = Context\withCancel($ctx, fn () => 1 === \connection_aborted());
+
     $logger = $logger ?? new Logger\Noop();
 
     if (PHP_SAPI === 'cli') {
