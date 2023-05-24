@@ -107,3 +107,11 @@ function contains(array $array, mixed $value): bool
 {
     return \in_array($value, $array, true);
 }
+
+/**
+ * @psalm-pure
+ */
+function merge(array ...$arrays): array
+{
+    return \array_merge(...$arrays);
+}

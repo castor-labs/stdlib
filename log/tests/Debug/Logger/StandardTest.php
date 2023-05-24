@@ -18,6 +18,8 @@ namespace Castor\Debug\Logger;
 
 use Castor\Context;
 use Castor\Crypto\Hash;
+use Castor\Debug\LevelLogger;
+use Castor\Debug\Logger;
 use Castor\Io;
 use Castor\Io\Stream;
 use Castor\Time\Clock\Frozen;
@@ -26,7 +28,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  *
- * @coversNothing
+ * @covers \Castor\Debug\LevelLogger
+ * @covers \Castor\Debug\Logger\Standard
  */
 class StandardTest extends TestCase
 {
@@ -36,17 +39,18 @@ class StandardTest extends TestCase
         $clock = Frozen::at('Y-m-d H:i:s', '2022-04-05 13:00:00');
 
         $logger = Standard::default($stream, $clock);
+        $logger = new LevelLogger($logger);
 
         $ctx = Context\nil();
-        $ctx = Meta\withValue($ctx, 'correlation_id', 'b611627d-f9c6-4350-bbd0-6b4e6e270d29');
+        $ctx = Logger\withMeta($ctx, ['correlation_id' => 'b611627d-f9c6-4350-bbd0-6b4e6e270d29']);
 
-        $logger->log(Level\warn($ctx), 'This is a warning');
+        $logger->warn($ctx, 'This is a warning');
 
         $clock->advance('PT30S');
 
-        $logger->log(Level\error($ctx), 'This is 30 seconds later');
+        $logger->error($ctx, 'This is 30 seconds later');
 
-        $logger->log(Level\trace($ctx), 'This log should not appear');
+        $logger->trace($ctx, 'This log should not appear');
 
         $stream->seek(0, Io\SEEK_START);
         $data = Hash\md5_hex(Io\readAll($stream));

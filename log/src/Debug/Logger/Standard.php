@@ -62,9 +62,11 @@ final class Standard implements Logger
         );
     }
 
-    public function log(Context $ctx, string $message): void
+    public function log(Context $ctx, string $message, mixed ...$params): void
     {
-        $level = Logger\Level\get($ctx) ?? $this->default;
+        $level = Logger\getLevel($ctx) ?? $this->default;
+        $app = Logger\getApp($ctx) ?? '';
+
         if ($level->value < $this->minimum->value) {
             return;
         }
@@ -75,9 +77,14 @@ final class Standard implements Logger
             $this->timer->time(),
         );
 
-        $parts = [$header, $message];
+        $parts = [$header];
+        if ('' !== $app) {
+            $parts[] = '['.$app.']';
+        }
 
-        $this->normalizeMetadata($level, $parts, Meta\get($ctx)->toArray());
+        $parts[] = $message;
+
+        $this->normalizeMetadata($level, $parts, Logger\getMeta($ctx));
 
         $this->out->write(Str\join($parts, ' ').PHP_EOL);
     }

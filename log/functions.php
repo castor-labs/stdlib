@@ -14,120 +14,63 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Debug\Logger\Level;
+namespace Castor\Debug\Logger;
 
+use Castor\Arr;
 use Castor\Context;
-use Castor\Debug\Logger\Level;
 
 /**
  * @internal
  */
-const CTX_KEY = 'logger.level';
+enum Key
+{
+    case LEVEL;
+
+    case META;
+
+    case APP;
+}
 
 /**
- * Adds fatal log level to the context.
+ * Adds values to the logger metadata.
  */
-function fatal(Context $ctx): Context
+function withMeta(Context $ctx, array $meta): Context
 {
-    return Context\withValue($ctx, CTX_KEY, Level::FATAL);
+    $stored = getMeta($ctx);
+
+    return Context\withValue($ctx, Key::META, Arr\merge($stored, $meta));
 }
 
 /**
  * Adds error log level to the context.
  */
-function error(Context $ctx): Context
+function getMeta(Context $ctx): array
 {
-    return Context\withValue($ctx, CTX_KEY, Level::ERROR);
+    return $ctx->value(Key::META) ?? [];
+}
+
+function withApp(Context $ctx, string $app): Context
+{
+    return Context\withValue($ctx, Key::APP, $app);
+}
+
+function getApp(Context $ctx): string
+{
+    return $ctx->value(Key::APP) ?? '';
 }
 
 /**
- * Adds warn log level to the context.
+ * Adds fatal log level to the context.
  */
-function warn(Context $ctx): Context
+function withLevel(Context $ctx, Level $level): Context
 {
-    return Context\withValue($ctx, CTX_KEY, Level::WARN);
-}
-
-/**
- * Adds info log level to the context.
- */
-function info(Context $ctx): Context
-{
-    return Context\withValue($ctx, CTX_KEY, Level::INFO);
-}
-
-/**
- * Adds debug log level to the context.
- */
-function debug(Context $ctx): Context
-{
-    return Context\withValue($ctx, CTX_KEY, Level::DEBUG);
-}
-
-/**
- * Adds trace log level to the context.
- */
-function trace(Context $ctx): Context
-{
-    return Context\withValue($ctx, CTX_KEY, Level::TRACE);
+    return Context\withValue($ctx, Key::LEVEL, $level);
 }
 
 /**
  * Gets the level stored in the context.
  */
-function get(Context $ctx): ?Level
+function getLevel(Context $ctx): ?Level
 {
-    return $ctx->value(CTX_KEY);
-}
-
-namespace Castor\Debug\Logger\Meta;
-
-use Castor\Context;
-use Castor\Debug\Logger\Meta;
-
-/**
- * @internal
- */
-const CTX_KEY = 'logger.meta';
-
-/**
- * Adds values to the logger metadata.
- */
-function withValue(Context $ctx, string $key, mixed $value): Context
-{
-    $meta = get($ctx);
-
-    if ($meta->isEmpty()) {
-        $ctx = Context\withValue($ctx, CTX_KEY, $meta);
-    }
-
-    $meta->add($key, $value);
-
-    return $ctx;
-}
-
-/**
- * Adds values to the logger metadata.
- *
- * @param array<string,mixed> $values
- */
-function withValues(Context $ctx, array $values): Context
-{
-    $meta = get($ctx);
-
-    if ($meta->isEmpty()) {
-        $ctx = Context\withValue($ctx, CTX_KEY, $meta);
-    }
-
-    $meta->merge($values);
-
-    return $ctx;
-}
-
-/**
- * Adds error log level to the context.
- */
-function get(Context $ctx): Meta
-{
-    return $ctx->value(CTX_KEY) ?? new Meta();
+    return $ctx->value(Key::LEVEL);
 }
