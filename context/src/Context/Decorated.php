@@ -23,7 +23,7 @@ use Castor\Context;
  */
 abstract class Decorated implements Context
 {
-    public readonly Context $next;
+    public Context $next;
 
     public function __construct(Context $next)
     {
