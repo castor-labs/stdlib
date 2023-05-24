@@ -46,19 +46,19 @@ function install_dependencies() {
 }
 
 function test() {
-    stack_exec main vendor/bin/phpunit
+    stack_run main vendor/bin/phpunit
 }
 
 function static_analysis() {
-    stack_exec main vendor/bin/psalm --stats --no-cache --show-info=true
+    stack_run main vendor/bin/psalm --stats --no-cache --show-info=true
 }
 
 function code_style_check() {
-    stack_exec main vendor/bin/php-cs-fixer fix --dry-run -v
+    stack_run main vendor/bin/php-cs-fixer fix --dry-run -v
 }
 
 function code_style_fix() {
-    stack_exec main vendor/bin/php-cs-fixer fix
+    stack_run main vendor/bin/php-cs-fixer fix
 }
 
 shift

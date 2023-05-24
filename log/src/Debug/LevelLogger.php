@@ -30,36 +30,36 @@ final class LevelLogger implements Logger
 
     public function fatal(Context $ctx, string $message, mixed ...$params): void
     {
-        $this->logger->log(Logger\withLevel($ctx, Level::FATAL), $message);
+        $this->logger->log(Logger\withLevel($ctx, Level::FATAL), $message, ...$params);
     }
 
     public function error(Context $ctx, string $message, mixed ...$params): void
     {
-        $this->logger->log(Logger\withLevel($ctx, Level::ERROR), $message);
+        $this->logger->log(Logger\withLevel($ctx, Level::ERROR), $message, ...$params);
     }
 
     public function warn(Context $ctx, string $message, mixed ...$params): void
     {
-        $this->logger->log(Logger\withLevel($ctx, Level::WARN), $message);
+        $this->logger->log(Logger\withLevel($ctx, Level::WARN), $message, ...$params);
     }
 
     public function info(Context $ctx, string $message, mixed ...$params): void
     {
-        $this->logger->log(Logger\withLevel($ctx, Level::INFO), $message);
+        $this->logger->log(Logger\withLevel($ctx, Level::INFO), $message, ...$params);
     }
 
     public function debug(Context $ctx, string $message, mixed ...$params): void
     {
-        $this->logger->log(Logger\withLevel($ctx, Level::DEBUG), $message);
+        $this->logger->log(Logger\withLevel($ctx, Level::DEBUG), $message, ...$params);
     }
 
     public function trace(Context $ctx, string $message, mixed ...$params): void
     {
-        $this->logger->log(Logger\withLevel($ctx, Level::TRACE), $message);
+        $this->logger->log(Logger\withLevel($ctx, Level::TRACE), $message, ...$params);
     }
 
     public function log(Context $ctx, string $message, mixed ...$params): void
     {
-        $this->logger->log($ctx, $message);
+        $this->logger->log($ctx, $message, ...$params);
     }
 }

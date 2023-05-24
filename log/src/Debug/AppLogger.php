@@ -31,6 +31,6 @@ final class AppLogger implements Logger
 
     public function log(Context $ctx, string $message, mixed ...$params): void
     {
-        $this->logger->log(Logger\withApp($ctx, $this->app), $message);
+        $this->logger->log(Logger\withApp($ctx, $this->app), $message, ...$params);
     }
 }
