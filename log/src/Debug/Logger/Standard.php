@@ -96,7 +96,7 @@ final class Standard implements Logger
             $parts[] = '['.$app.']';
         }
 
-        $this->prepareMessage($message, $meta);
+        $this->interpolate($message, $meta);
 
         $parts[] = $message;
 
@@ -144,23 +144,22 @@ final class Standard implements Logger
         }
     }
 
-    private function prepareMessage(string &$message, array &$meta): void
+    private function interpolate(string &$message, array &$meta): void
     {
         $newMeta = [];
-        foreach ($meta as $key => $value) {
-            if (!\is_string($key)) {
-                continue;
-            }
-
-            if (!Str\contains($message, '{'.$key.'}')) {
-                $newMeta[$key] = $value;
+        $replace = [];
+        foreach ($meta as $key => $val) {
+            $newKey = '{'.$key.'}';
+            if (Str\contains($message, $newKey) && (!\is_array($val) || (\is_object($val) && \method_exists($val, '__toString')))) {
+                $replace[$newKey] = $val;
 
                 continue;
             }
 
-            $message = Str\replace($message, '{'.$key.'}', (string) $value);
+            $newMeta[$key] = $val;
         }
 
+        $message = \strtr($message, $replace);
         $meta = $newMeta;
     }
 }

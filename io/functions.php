@@ -31,6 +31,11 @@ const SEEK_END = 2;
 function readAll(Reader $reader, int $chunk = 4096): string
 {
     $contents = '';
+
+    if ($reader instanceof Seeker) {
+        $reader->seek(0, SEEK_START);
+    }
+
     while (true) {
         try {
             $contents .= $reader->read($chunk);

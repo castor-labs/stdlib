@@ -50,11 +50,25 @@ class StandardTest extends TestCase
 
         $logger->error($ctx, 'This is 30 seconds later');
 
-        $logger->trace($ctx, 'This log should not appear');
+        $logger->trace($ctx, 'This log should not appear', [
+            'data' => 'foo',
+        ]);
 
-        $stream->seek(0, Io\SEEK_START);
-        $data = Hash\md5_hex(Io\readAll($stream));
+        $logger->trace($ctx, 'This log should not appear', [
+            'data' => 'foo',
+        ]);
 
-        $this->assertSame('ed9936d1723eeef4418b6d89b7cbbf60', $data);
+        $logger->fatal($ctx, 'This log is {place}', [
+            'place' => 'using a placeholder',
+        ]);
+
+        $logger->info($ctx, 'This log should is {place}', [
+            'place' => ['params' => 'hello'],
+        ]);
+
+        $contents = Io\readAll($stream);
+        $hash = Hash\md5_hex($contents);
+
+        $this->assertSame('c18f1a66598f0e132d6f33205ec6fae8', $hash);
     }
 }
