@@ -23,5 +23,5 @@ interface Logger
     /**
      * Writes a log entry.
      */
-    public function log(Context $ctx, string $message): void;
+    public function log(Context $ctx, string $message, mixed ...$params): void;
 }

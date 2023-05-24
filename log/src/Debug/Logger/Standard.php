@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Castor\Debug\Logger;
 
+use Castor\Arr;
 use Castor\Context;
 use Castor\Debug\Logger;
 use Castor\Io\Flusher;
@@ -66,6 +67,19 @@ final class Standard implements Logger
     {
         $level = Logger\getLevel($ctx) ?? $this->default;
         $app = Logger\getApp($ctx) ?? '';
+        $meta = Logger\getMeta($ctx);
+
+        foreach ($params as $param) {
+            if ($param instanceof Level) {
+                $level = $param;
+
+                continue;
+            }
+
+            if (\is_array($param)) {
+                $meta = Arr\merge($meta, $param);
+            }
+        }
 
         if ($level->value < $this->minimum->value) {
             return;
@@ -82,9 +96,11 @@ final class Standard implements Logger
             $parts[] = '['.$app.']';
         }
 
+        $this->prepareMessage($message, $meta);
+
         $parts[] = $message;
 
-        $this->normalizeMetadata($level, $parts, Logger\getMeta($ctx));
+        $this->normalizeMetadata($level, $parts, $meta);
 
         $this->out->write(Str\join($parts, ' ').PHP_EOL);
     }
@@ -126,5 +142,25 @@ final class Standard implements Logger
 
             $kv[] = Str\format('%s=%s', $this->colorizer->colorize($level, $key), $value);
         }
+    }
+
+    private function prepareMessage(string &$message, array &$meta): void
+    {
+        $newMeta = [];
+        foreach ($meta as $key => $value) {
+            if (!\is_string($key)) {
+                continue;
+            }
+
+            if (!Str\contains($message, '{'.$key.'}')) {
+                $newMeta[$key] = $value;
+
+                continue;
+            }
+
+            $message = Str\replace($message, '{'.$key.'}', (string) $value);
+        }
+
+        $meta = $newMeta;
     }
 }

@@ -29,7 +29,7 @@ final class AppLogger implements Logger
         $this->logger = $logger;
     }
 
-    public function log(Context $ctx, string $message): void
+    public function log(Context $ctx, string $message, mixed ...$params): void
     {
         $this->logger->log(Logger\withApp($ctx, $this->app), $message);
     }

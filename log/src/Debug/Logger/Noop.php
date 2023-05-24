@@ -21,7 +21,7 @@ use Castor\Debug\Logger;
 
 final class Noop implements Logger
 {
-    public function log(Context $ctx, string $message): void
+    public function log(Context $ctx, string $message, mixed ...$params): void
     {
         // Noop
     }
