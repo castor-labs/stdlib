@@ -26,7 +26,7 @@ function stderr(): Writer&Flusher
 {
     static $stream = null;
     if (null === $stream) {
-        $stream = Stream::create(STDERR);
+        $stream = Stream::create(\STDERR);
     }
 
     return $stream;
