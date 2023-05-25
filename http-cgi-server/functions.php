@@ -71,9 +71,14 @@ function serve(Context $ctx, Handler $handler, Logger $logger = null, bool $catc
             throw $e;
         }
 
-        $logger->error($ctx, 'Uncaught error while handling request', [
-            'errors' => Err\collect($e),
-        ]);
+        $errors = Err\collect($e);
+        foreach ($errors as $error) {
+            $logger->error($ctx, $error['message'], [
+                'type' => $error['type'],
+                'file' => $error['file'],
+                'line' => $error['line']
+            ]);
+        }
 
         if (!$writer->areHeadersSent()) {
             $writer->headers()->set('Content-Type', 'text/plain');

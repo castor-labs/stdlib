@@ -56,6 +56,7 @@ function lastReplace(string $substring, string $replacement, string $class = \Ru
 
 /**
  * Collects all exceptions in an array.
+ * @return array<int,array{type: class-string, message: string, code: int, file: string, line: int}>
  */
 function collect(\Throwable $e): array
 {
