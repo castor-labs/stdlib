@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Castor\Net\Http\Cgi;
 
 use Castor\Context;
+use Castor\Debug\AppLogger;
+use Castor\Debug\LevelLogger;
 use Castor\Debug\Logger;
 use Castor\Err;
 use Castor\Io\Error;
@@ -45,13 +47,14 @@ use Castor\Str;
  */
 function serve(Context $ctx, Handler $handler, Logger $logger = null, bool $catchErrors = false, bool $ignoreUserAbort = true): void
 {
+    $logger = $logger ?? new Logger\Noop();
+    $logger = new LevelLogger(new AppLogger($logger, 'CGI'));
+
     // This will continue script execution even if the client disconnects
     \ignore_user_abort($ignoreUserAbort);
 
     // We pass this cancellation signal so the user can check whether the client disconnected
     $ctx = Context\withCancel($ctx, fn () => 1 === \connection_aborted());
-
-    $logger = $logger ?? new Logger\Noop();
 
     if (PHP_SAPI === 'cli') {
         throw new Error('Cannot serve in a non CGI context');
@@ -68,8 +71,9 @@ function serve(Context $ctx, Handler $handler, Logger $logger = null, bool $catc
             throw $e;
         }
 
-        $ctx = Logger\Meta\withValue($ctx, 'errors', Err\collect($e));
-        $logger->log(Logger\Level\error($ctx), 'Uncaught error while handling request');
+        $logger->error($ctx, 'Uncaught error while handling request', [
+            'errors' => Err\collect($e),
+        ]);
 
         if (!$writer->areHeadersSent()) {
             $writer->headers()->set('Content-Type', 'text/plain');

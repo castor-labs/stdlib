@@ -205,6 +205,19 @@ class UriTest extends TestCase
     }
 
     /**
+     * @throws ParseError
+     */
+    public function testItParsesPostgresSecret(): void
+    {
+        $this->testParse('postgresql://main:%5B%3A,J35Tyiq%3A0-%3FF35fj%3EtW%2Ay@database-primary.ekklesion-build.svc:5432/main', Uri::fromParts(
+            scheme: 'postgresql',
+            userinfo: 'main:[:,J35Tyiq:0-?F35fj>tW*y',
+            host: 'database-primary.ekklesion-build.svc:5432',
+            path: '/main'
+        ), 'postgresql://main:%5B%3A%2CJ35Tyiq%3A0-%3FF35fj%3EtW%2Ay@database-primary.ekklesion-build.svc:5432/main');
+    }
+
+    /**
      * Unescaped :// in query should not create a scheme.
      *
      * @throws ParseError
