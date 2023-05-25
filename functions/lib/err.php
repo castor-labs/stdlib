@@ -63,7 +63,7 @@ function collect(\Throwable $e): array
     $errors = [];
     while ($e instanceof \Throwable) {
         $errors[] = [
-            'type' => \gettype($e),
+            'type' => \get_class($e),
             'message' => $e->getMessage(),
             'code' => $e->getCode(),
             'file' => $e->getFile(),
