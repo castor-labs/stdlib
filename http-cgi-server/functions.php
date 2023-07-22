@@ -159,7 +159,7 @@ function parseUri(array $server = null): Uri
 {
     $server = $server ?? $_SERVER;
 
-    $uri = Uri::fromParts();
+    $uri = Uri::parse($server['REQUEST_URI'] ?? '/');
 
     if (isset($server['HTTP_X_FORWARDED_PROTO'])) {
         $uri = $uri->withScheme($server['HTTP_X_FORWARDED_PROTO']);
@@ -186,8 +186,10 @@ function parseUri(array $server = null): Uri
         $uri = $uri->withHost($host);
     }
 
-    if (isset($server['REQUEST_URI'])) {
-        $uri = $uri->withPath(\current(\explode('?', $server['REQUEST_URI'])));
+    // If path info is not empty and is different to thr request URI, then path info has preference.
+    $pathInfo = \current(\explode('?', $server['PATH_INFO'] ?? ''));
+    if ($pathInfo !== '' && $uri->getPath() !== $pathInfo) {
+        $uri = $uri->withPath($pathInfo);
     }
 
     if (isset($server['QUERY_STRING'])) {
