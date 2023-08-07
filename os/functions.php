@@ -22,6 +22,8 @@ use Castor\Io\Reader;
 use Castor\Io\Stream;
 use Castor\Io\Writer;
 
+use function getcwd as php_getcwd;
+
 function stderr(): Writer&Flusher
 {
     static $stream = null;
@@ -69,9 +71,9 @@ function getEnv(string $env): string
 
 function getCwd(): string
 {
-    $result = getcwd();
+    $result = php_getcwd();
     if (false === $result) {
-        throw Err\last();
+        throw new \RuntimeException(Err\getLassErrorClean());
     }
 
     return $result;
@@ -84,7 +86,7 @@ function readFile(string $filename): string
         return $contents;
     }
 
-    throw Err\last();
+    throw new \RuntimeException(Err\getLassErrorClean());
 }
 
 function tempDir(): string
@@ -95,7 +97,7 @@ function tempDir(): string
 function makeDir(string $path, int $mode = 0755, bool $recursive = true): string
 {
     if (!\is_dir($path) && !@\mkdir($path, $mode, $recursive) && !\is_dir($path)) {
-        throw Err\last();
+        throw new \RuntimeException(Err\getLassErrorClean());
     }
 
     return $path;

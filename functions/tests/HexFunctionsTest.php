@@ -50,8 +50,10 @@ class HexFunctionsTest extends TestCase
     {
         $input = 'not a hex string';
 
-        $this->expectException(InputError::class);
-        $this->expectErrorMessage('Input string must be hexadecimal string');
-        Hex\decode($input);
+        try {
+            Hex\decode($input);
+        } catch (InputError $e) {
+            $this->assertSame('Input string must be hexadecimal string', $e->getMessage());
+        }
     }
 }

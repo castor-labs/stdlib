@@ -16,13 +16,10 @@ declare(strict_types=1);
 
 namespace Castor\Debug\Logger;
 
-use Castor\Context;
 use Castor\Crypto\Hash;
 use Castor\Debug\LevelLogger;
-use Castor\Debug\Logger;
 use Castor\Io;
 use Castor\Io\Stream;
-use Castor\Time\Clock\Frozen;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -36,39 +33,35 @@ class StandardTest extends TestCase
     public function testDefaultPublicApi(): void
     {
         $stream = Stream::memory();
-        $clock = Frozen::at('Y-m-d H:i:s', '2022-04-05 13:00:00');
 
-        $logger = Standard::default($stream, $clock);
+        $logger = Standard::default($stream);
         $logger = new LevelLogger($logger);
 
-        $ctx = Context\nil();
-        $ctx = Logger\withMeta($ctx, ['correlation_id' => 'b611627d-f9c6-4350-bbd0-6b4e6e270d29']);
+        $meta = ['correlation_id' => 'b611627d-f9c6-4350-bbd0-6b4e6e270d29'];
 
-        $logger->warn($ctx, 'This is a warning');
+        $logger->warn('This is a warning', $meta);
 
-        $clock->advance('PT30S');
+        $logger->error('This is 30 seconds later');
 
-        $logger->error($ctx, 'This is 30 seconds later');
-
-        $logger->trace($ctx, 'This log should not appear', [
+        $logger->trace('This log should not appear', $meta, [
             'data' => 'foo',
         ]);
 
-        $logger->trace($ctx, 'This log should not appear', [
+        $logger->trace('This log should not appear', $meta, [
             'data' => 'foo',
         ]);
 
-        $logger->fatal($ctx, 'This log is {place}', [
+        $logger->fatal('This log is {place}', $meta, [
             'place' => 'using a placeholder',
         ]);
 
-        $logger->info($ctx, 'This log should is {place}', [
+        $logger->info('This log should is {place}', $meta, [
             'place' => ['params' => 'hello'],
         ]);
 
         $contents = Io\readAll($stream);
         $hash = Hash\md5_hex($contents);
 
-        $this->assertSame('c18f1a66598f0e132d6f33205ec6fae8', $hash);
+        $this->assertSame('be734a9f030117d5a664741dfafc7fee', $hash);
     }
 }

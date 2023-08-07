@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+
+if [[ -f "$PWD"/.castor/sdk ]]; then
+    "$PWD"/.castor/sdk "$@"
+else
+    echo "No SDK script found. Make sure you are in the project root."
+fi

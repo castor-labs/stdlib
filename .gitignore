@@ -1,3 +1,8 @@
 vendor
 cache
 .php-cs-fixer.cache
+!.idea/modules.xml
+!.idea/php.xml
+!.idea/phpunit.xml
+!.idea/stdlib.iml
+!.idea/vcs.xml

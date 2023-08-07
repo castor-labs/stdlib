@@ -21,15 +21,12 @@ use Castor\Err;
 
 /**
  * @throws InputError
- *
- * @noinspection PhpDocMissingThrowsInspection
  */
 function decode(string $hex): string
 {
     $decoded = @\hex2bin($hex);
     if (!\is_string($decoded)) {
-        // @noinspection PhpUnhandledExceptionInspection
-        throw Err\lastReplace('bin2hex(): ', '', InputError::class);
+        throw new InputError(Err\getLassErrorClean());
     }
 
     return $decoded;

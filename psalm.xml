@@ -20,6 +20,7 @@
         <directory name="random/src" />
         <directory name="time/src" />
         <directory name="uri/src" />
+        <directory name="uuid/src" />
         <ignoreFiles>
             <directory name="vendor" />
         </ignoreFiles>

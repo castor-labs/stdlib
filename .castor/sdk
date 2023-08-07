@@ -14,7 +14,7 @@ function sdk() {
 }
 
 function stack_build() {
-    compose build --no-cache --pull
+    compose build --pull
 }
 
 function stack_exec() {
@@ -50,7 +50,7 @@ function test() {
 }
 
 function static_analysis() {
-    stack_run main vendor/bin/psalm --stats --no-cache --show-info=true
+    stack_run main vendor/bin/psalm --stats --no-cache
 }
 
 function code_style_check() {
@@ -64,7 +64,7 @@ function code_style_fix() {
 shift
 
 case $CMD in
-  'setup')
+  'init')
     stack_build
     install_dependencies
     stack_boot
@@ -80,7 +80,7 @@ case $CMD in
     stack_boot
   ;;
   'composer')
-    stack_exec app composer "$@"
+    stack_exec main composer "$@"
   ;;
   'fmt')
     code_style_fix

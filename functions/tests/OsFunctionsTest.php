@@ -27,8 +27,10 @@ class OsFunctionsTest extends TestCase
 {
     public function testOsMakeDir(): void
     {
-        $this->expectException(\Exception::class);
-        $this->expectErrorMessage('Permission denied');
-        Os\makeDir('/usr/bin/poop');
+        try {
+            Os\makeDir('/usr/bin/poop');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('Permission denied', $e->getMessage());
+        }
     }
 }

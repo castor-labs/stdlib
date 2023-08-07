@@ -34,9 +34,6 @@ final class TeeReader implements Reader
         $this->writer = $writer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function read(int $length): string
     {
         $bytes = $this->reader->read($length);

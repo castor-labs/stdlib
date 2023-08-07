@@ -71,9 +71,6 @@ final class ResponseWriter implements IResponseWriter, Io\Flusher, Io\Closer
         $this->sentHeaders = true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function write(string $bytes): int
     {
         if (false === $this->sentHeaders) {

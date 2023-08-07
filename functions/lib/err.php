@@ -16,46 +16,24 @@ declare(strict_types=1);
 
 namespace Castor\Err;
 
-/**
- * Returns PHP's last error as an exception.
- *
- * @template T
- *
- * @param class-string<T> $class
- *
- * @return T
- */
-function last(string $class = \RuntimeException::class): \Throwable
-{
-    $array = \error_get_last();
-    $e = new $class($array['message'] ?? 'Unknown Error', $array['type'] ?? 0);
-    \error_clear_last();
-
-    return $e;
-}
+use Castor\RegExp;
 
 /**
- * Returns PHP's last error as an exception but modifying the message.
- *
- * @template T
- *
- * @param class-string<T> $class
- *
- * @return T
+ * Returns a clean string with the last PHP error.
  */
-function lastReplace(string $substring, string $replacement, string $class = \RuntimeException::class): \Throwable
+function getLassErrorClean(): string
 {
     $array = \error_get_last();
     $message = $array['message'] ?? 'Unknown Error';
-    $message = \str_replace($substring, $replacement, $message);
-    $e = new $class($message, $array['type'] ?? 0);
     \error_clear_last();
+    $matches = RegExp\matches('/\(\): (.*)/', $message);
 
-    return $e;
+    return $matches[1] ?? $message;
 }
 
 /**
  * Collects all exceptions in an array.
+ *
  * @return array<int,array{type: class-string, message: string, code: int, file: string, line: int}>
  */
 function collect(\Throwable $e): array

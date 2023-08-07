@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Castor\Debug;
 
-use Castor\Context;
 use Castor\Debug\Logger\Level;
 
 final class LevelLogger implements Logger
@@ -28,38 +27,38 @@ final class LevelLogger implements Logger
         $this->logger = $logger;
     }
 
-    public function fatal(Context $ctx, string $message, mixed ...$params): void
+    public function fatal(string $message, mixed ...$params): void
     {
-        $this->logger->log(Logger\withLevel($ctx, Level::FATAL), $message, ...$params);
+        $this->logger->log($message, Level::FATAL, ...$params);
     }
 
-    public function error(Context $ctx, string $message, mixed ...$params): void
+    public function error(string $message, mixed ...$params): void
     {
-        $this->logger->log(Logger\withLevel($ctx, Level::ERROR), $message, ...$params);
+        $this->logger->log($message, Level::ERROR, ...$params);
     }
 
-    public function warn(Context $ctx, string $message, mixed ...$params): void
+    public function warn(string $message, mixed ...$params): void
     {
-        $this->logger->log(Logger\withLevel($ctx, Level::WARN), $message, ...$params);
+        $this->logger->log($message, Level::WARN, ...$params);
     }
 
-    public function info(Context $ctx, string $message, mixed ...$params): void
+    public function info(string $message, mixed ...$params): void
     {
-        $this->logger->log(Logger\withLevel($ctx, Level::INFO), $message, ...$params);
+        $this->logger->log($message, Level::INFO, ...$params);
     }
 
-    public function debug(Context $ctx, string $message, mixed ...$params): void
+    public function debug(string $message, mixed ...$params): void
     {
-        $this->logger->log(Logger\withLevel($ctx, Level::DEBUG), $message, ...$params);
+        $this->logger->log($message, Level::DEBUG, ...$params);
     }
 
-    public function trace(Context $ctx, string $message, mixed ...$params): void
+    public function trace(string $message, mixed ...$params): void
     {
-        $this->logger->log(Logger\withLevel($ctx, Level::TRACE), $message, ...$params);
+        $this->logger->log($message, Level::TRACE, ...$params);
     }
 
-    public function log(Context $ctx, string $message, mixed ...$params): void
+    public function log(string $message, mixed ...$params): void
     {
-        $this->logger->log($ctx, $message, ...$params);
+        $this->logger->log($message, ...$params);
     }
 }

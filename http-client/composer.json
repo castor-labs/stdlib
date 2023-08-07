@@ -1,0 +1,30 @@
+{
+  "name": "castor/http-client",
+  "description": "HTTP client implementation based on curl and php streams",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Matias Navarro Carter",
+      "email": "mnavarrocarter@gmail.com",
+      "role": "Lead Maintainer"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "ext-curl": "*",
+    "castor/http": "*",
+    "castor/functions": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Castor\\": "src"
+    },
+    "files": ["functions.php"]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Castor\\": "tests"
+    }
+  }
+}

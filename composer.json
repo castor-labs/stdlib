@@ -1,12 +1,13 @@
 {
     "name": "castor/stdlib",
     "description": "The Castor Standard Library for PHP",
-    "minimum-stability": "stable",
     "license": "MIT",
     "keywords": [
         "php",
         "php8"
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "authors": [
         {
             "name": "Matias Navarro Carter",
@@ -14,21 +15,35 @@
             "role": "Lead Maintainer"
         }
     ],
-    "autoload": {
-        "psr-4": {
-            "Castor\\": ["console/src", "context/src", "functions/src", "http-cgi-server/src", "http-client/src", "http/src", "id/src", "io/src", "log/src", "os/src", "random/src", "time/src", "uri/src"]
-        },
-        "files": ["context/functions.php", "functions/functions.php", "http-cgi-server/functions.php", "http-client/functions.php", "http/functions.php", "io/functions.php", "log/functions.php", "os/functions.php", "uri/functions.php"]
-    },
     "autoload-dev": {
         "psr-4": {
-            "Castor\\Monorepo\\": [".castor/monorepo/src", ".castor/monorepo/tests"],
-            "Castor\\": ["console/tests", "context/tests", "functions/tests", "http-cgi-server/tests", "http-client/tests", "http/tests", "id/tests", "io/tests", "log/tests", "os/tests", "random/tests", "time/tests", "uri/tests"]
+            "Castor\\Monorepo\\": [".castor/monorepo/src", ".castor/monorepo/tests"]
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "require": {
         "php": ">=8.1",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "castor/context": "*",
+        "castor/functions": "*",
+        "castor/http": "*",
+        "castor/http-cgi-server": "*",
+        "castor/http-client": "*",
+        "castor/io": "*",
+        "castor/log": "*",
+        "castor/os": "*",
+        "castor/random": "*",
+        "castor/time": "*",
+        "castor/uri": "*",
+        "castor/uuid": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
@@ -37,8 +52,5 @@
         "vimeo/psalm": "^5.1",
         "composer/composer": "^2.3",
         "phpbench/phpbench": "^1.2"
-    },
-    "scripts": {
-        "pre-autoload-dump": "Castor\\Monorepo\\Command::syncProjects"
     }
 }

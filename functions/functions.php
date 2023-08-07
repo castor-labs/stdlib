@@ -34,6 +34,8 @@ require_once __DIR__.'/lib/obj.php';
 
 require_once __DIR__.'/lib/os.path.php';
 
+require_once __DIR__.'/lib/regexp.php';
+
 require_once __DIR__.'/lib/runtime.php';
 
 require_once __DIR__.'/lib/str.php';

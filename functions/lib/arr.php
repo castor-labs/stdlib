@@ -110,6 +110,8 @@ function contains(array $array, mixed $value): bool
 
 /**
  * @psalm-pure
+ *
+ * @psalm-suppress NamedArgumentNotAllowed
  */
 function merge(array ...$arrays): array
 {

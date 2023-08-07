@@ -32,7 +32,9 @@ class TransportsBench
      * @throws TransportError
      *
      * @Revs(10)
+     *
      * @Iterations(5)
+     *
      * @ParamProviders("provideRequests")
      */
     public function benchStreamSend(array $params): void
@@ -45,7 +47,9 @@ class TransportsBench
      * @throws TransportError
      *
      * @Revs(10)
+     *
      * @Iterations(5)
+     *
      * @ParamProviders("provideRequests")
      */
     public function benchCurlSend(array $params): void
