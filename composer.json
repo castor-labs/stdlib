@@ -51,7 +51,6 @@
         "phpunit/phpunit": "^9.5",
         "vimeo/psalm": "^5.1",
         "composer/composer": "^2.3",
-        "phpbench/phpbench": "^1.2",
-        "nikic/php-parser": "^4.16"
+        "phpbench/phpbench": "^1.2"
     }
 }

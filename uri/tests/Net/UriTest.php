@@ -66,6 +66,16 @@ class UriTest extends TestCase
         ));
     }
 
+    public function testItParsesWeirdHttpUri(): void
+    {
+        $this->testParse('http://http://http://@http://http://?http://#http://', Uri::fromParts(
+            scheme: 'http',
+            userInfo: 'http://http://',
+            host: 'http',
+            path: '//http://'
+        ));
+    }
+
     /**
      * @throws ParseError
      */
