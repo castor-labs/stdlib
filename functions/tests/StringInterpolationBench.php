@@ -26,7 +26,9 @@ class StringInterpolationBench
 
     /**
      * @Revs(1000)
+     *
      * @Iterations(5)
+     *
      * @ParamProviders("provideStrings")
      */
     public function benchSprintf(array $params): void
@@ -36,7 +38,9 @@ class StringInterpolationBench
 
     /**
      * @Revs(1000)
+     *
      * @Iterations(5)
+     *
      * @ParamProviders("provideStrings")
      */
     public function benchInterpolation(array $params): void

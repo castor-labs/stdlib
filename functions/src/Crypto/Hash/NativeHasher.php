@@ -53,9 +53,6 @@ final class NativeHasher implements Hasher
         return \hash($this->algo, $this->buffer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function write(string $bytes): int
     {
         $this->buffer .= $bytes;

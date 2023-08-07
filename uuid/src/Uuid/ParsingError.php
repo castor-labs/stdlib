@@ -14,22 +14,8 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Debug\Logger\Timer;
+namespace Castor\Uuid;
 
-use Castor\Debug\Logger\Timer;
-use Castor\Time\Clock;
-
-final class Unix implements Timer
+class ParsingError extends \InvalidArgumentException
 {
-    private Clock $clock;
-
-    public function __construct(Clock $clock)
-    {
-        $this->clock = $clock;
-    }
-
-    public function time(): string
-    {
-        return $this->clock->now()->format('U');
-    }
 }

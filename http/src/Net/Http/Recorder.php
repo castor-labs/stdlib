@@ -19,12 +19,11 @@ namespace Castor\Net\Http;
 use Castor\Io\Closer;
 use Castor\Io\Error;
 use Castor\Io\Reader;
-
-use const Castor\Io\SEEK_START;
-
 use Castor\Io\Seeker;
 use Castor\Io\Stream;
 use Castor\Io\Writer;
+
+use const Castor\Io\SEEK_START;
 
 /**
  * A Recorder is a ResponseWriter that can be used in test suites.

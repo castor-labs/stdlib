@@ -54,9 +54,6 @@ abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, 
         $this->flags = $flags;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function close(): void
     {
         if (null === $this->resource) {
@@ -67,9 +64,6 @@ abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, 
         $this->flags += self::FLAG_CLOSED;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function read(int $length): string
     {
         $this->ensureResource();
@@ -96,9 +90,6 @@ abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, 
         return $bytes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function readAt(int $offset, int $length): string
     {
         $this->seek($offset);
@@ -106,9 +97,6 @@ abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, 
         return $this->read($length);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function seek(int $offset = 0, int $whence = SEEK_CURRENT): int
     {
         $this->ensureResource();
@@ -120,9 +108,6 @@ abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, 
         return \fseek($this->resource, $offset, $whence);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function write(string $bytes): int
     {
         $this->ensureResource();
@@ -140,9 +125,6 @@ abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, 
         return $int;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function writeAt(int $offset, string $bytes): int
     {
         $this->seek($offset);
@@ -150,9 +132,6 @@ abstract class PhpResource implements Reader, Writer, Seeker, Closer, ReaderAt, 
         return $this->write($bytes);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function flush(): void
     {
         $this->ensureResource();

@@ -17,16 +17,17 @@ declare(strict_types=1);
 namespace Castor\Debug\Logger;
 
 use Castor\Arr;
-use Castor\Context;
 use Castor\Debug\Logger;
 use Castor\Io\Flusher;
 use Castor\Io\Writer;
 use Castor\Os;
 use Castor\Str;
-use Castor\Time\Clock;
 
 final class Standard implements Logger
 {
+    private const PARAM_APP = '@logger.app';
+    private const DEFAULT_APP_NAME = 'system';
+
     /**
      * Creates a new standard logger.
      */
@@ -35,7 +36,7 @@ final class Standard implements Logger
         public Level $minimum,
         public Level $default,
         public Colorizer $colorizer,
-        public Timer $timer,
+        public string $app = self::DEFAULT_APP_NAME
     ) {
     }
 
@@ -49,25 +50,22 @@ final class Standard implements Logger
         }
     }
 
-    public static function default(Writer $writer = null, Clock $clock = null): Standard
+    public static function default(Writer $writer = null): Standard
     {
         $writer = $writer ?? Os\stderr();
-        $clock = $clock ?? Clock\System::global();
 
         return new self(
             $writer,
             Level::DEBUG,
             Level::DEBUG,
             new Logger\Colorizer\Ansi(),
-            new Logger\Timer\Unix($clock),
         );
     }
 
-    public function log(Context $ctx, string $message, mixed ...$params): void
+    public function log(string $message, mixed ...$params): void
     {
-        $level = Logger\getLevel($ctx) ?? $this->default;
-        $app = Logger\getApp($ctx) ?? '';
-        $meta = Logger\getMeta($ctx);
+        $level = $this->default;
+        $meta = [];
 
         foreach ($params as $param) {
             if ($param instanceof Level) {
@@ -77,24 +75,28 @@ final class Standard implements Logger
             }
 
             if (\is_array($param)) {
-                $meta = Arr\merge($meta, $param);
+                $meta[] = $param;
             }
+        }
+
+        // Merge the meta into one
+        $meta = Arr\merge(...$meta);
+
+        // App name
+        $app = $meta[self::PARAM_APP] ?? $this->app;
+        if ('' !== $app) {
+            unset($meta[self::PARAM_APP]);
         }
 
         if ($level->value < $this->minimum->value) {
             return;
         }
 
-        $header = Str\format(
-            '%s[%s]',
+        $parts = [Str\format(
+            '%s [%s]',
             $this->levelString($level),
-            $this->timer->time(),
-        );
-
-        $parts = [$header];
-        if ('' !== $app) {
-            $parts[] = '['.$app.']';
-        }
+            $app
+        )];
 
         $this->interpolate($message, $meta);
 
@@ -150,13 +152,25 @@ final class Standard implements Logger
         $replace = [];
         foreach ($meta as $key => $val) {
             $newKey = '{'.$key.'}';
-            if (Str\contains($message, $newKey) && (!\is_array($val) || (\is_object($val) && \method_exists($val, '__toString')))) {
-                $replace[$newKey] = $val;
+            if (!Str\contains($message, $newKey)) {
+                $newMeta[$key] = $val;
 
                 continue;
             }
 
-            $newMeta[$key] = $val;
+            if (\is_array($val)) {
+                $newMeta[$key] = $val;
+
+                continue;
+            }
+
+            if (\is_object($val) && !\method_exists($val, '__toString')) {
+                $newMeta[$key] = $val;
+
+                continue;
+            }
+
+            $replace[$newKey] = $val;
         }
 
         $message = \strtr($message, $replace);

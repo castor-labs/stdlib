@@ -16,12 +16,10 @@ declare(strict_types=1);
 
 namespace Castor\Debug;
 
-use Castor\Context;
-
 interface Logger
 {
     /**
      * Writes a log entry.
      */
-    public function log(Context $ctx, string $message, mixed ...$params): void;
+    public function log(string $message, mixed ...$params): void;
 }

@@ -1,0 +1,27 @@
+{
+  "name": "castor/time",
+  "description": "Functions and abstractions to deal with time",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Matias Navarro Carter",
+      "email": "mnavarrocarter@gmail.com",
+      "role": "Lead Maintainer"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "castor/functions": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Castor\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Castor\\": "tests"
+    }
+  }
+}

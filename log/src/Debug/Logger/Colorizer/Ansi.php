@@ -47,15 +47,15 @@ final class Ansi implements Colorizer
     }
 
     /**
-     * @return array{0: string, 1:string}
+     * @return array{0: string, 1: string}
      */
     public function getColorFor(Level $level): array
     {
         return match ($level) {
-            Level::FATAL, Level::ERROR => self::$colorMap[self::RED] ?? [],
-            Level::WARN => self::$colorMap[self::YELLOW] ?? [],
-            Level::INFO => self::$colorMap[self::BLUE] ?? [],
-            Level::DEBUG, Level::TRACE => self::$colorMap[self::GREEN] ?? [],
+            Level::FATAL, Level::ERROR => self::$colorMap[self::RED],
+            Level::WARN => self::$colorMap[self::YELLOW],
+            Level::INFO => self::$colorMap[self::BLUE],
+            Level::DEBUG, Level::TRACE => self::$colorMap[self::GREEN],
         };
     }
 }

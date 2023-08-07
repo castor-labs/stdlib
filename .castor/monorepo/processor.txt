@@ -1,0 +1,19 @@
+Processor Needs:
+
+1. Build a list of projects (finding composer.json)
+2. For each project
+    1. Make sure autoload is correct
+    2. Make sure dependencies are correct
+    3. Make sure README.md is present
+    4. Make sure subtree split is setup
+        1. https://shantanoo-desai.github.io/posts/technology/git_subtree/
+        2. http://francis-besset.com/git-subtree-with-tags.html
+    5. Make sure is added to the base psalm
+    6. Make sure is added to the base phpunit
+    7. Make sure is added to the base php-cs-fixer config
+    8. Has an appropriate gitignore
+    9. Has an appropriate gitattributes
+    10. Has documentation
+    11. Has a changelog
+
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/360010467839-How-to-handle-monorepo-separate-indexing-autocompletes-by-root-directories

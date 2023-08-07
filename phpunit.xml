@@ -11,18 +11,19 @@
          verbose="true">
     <testsuites>
         <testsuite name="main">
-            <directory suffix="Test.php">console/tests</directory>
-            <directory suffix="Test.php">context/tests</directory>
-            <directory suffix="Test.php">functions/tests</directory>
-            <directory suffix="Test.php">http/tests</directory>
-            <directory suffix="Test.php">http-cgi-server/tests</directory>
-            <directory suffix="Test.php">http-client/tests</directory>
-            <directory suffix="Test.php">io/tests</directory>
-            <directory suffix="Test.php">log/tests</directory>
-            <directory suffix="Test.php">os/tests</directory>
-            <directory suffix="Test.php">random/tests</directory>
-            <directory suffix="Test.php">time/tests</directory>
-            <directory suffix="Test.php">uri/tests</directory>
+            <directory>console/tests</directory>
+            <directory>context/tests</directory>
+            <directory>functions/tests</directory>
+            <directory>http/tests</directory>
+            <directory>http-cgi-server/tests</directory>
+            <directory>http-client/tests</directory>
+            <directory>io/tests</directory>
+            <directory>log/tests</directory>
+            <directory>os/tests</directory>
+            <directory>random/tests</directory>
+            <directory>time/tests</directory>
+            <directory>uri/tests</directory>
+            <directory>uuid/tests</directory>
         </testsuite>
     </testsuites>
 
@@ -42,6 +43,7 @@
             <directory suffix=".php">random/src</directory>
             <directory suffix=".php">time/src</directory>
             <directory suffix=".php">uri/src</directory>
+            <directory suffix=".php">uuid/src</directory>
         </include>
         <report>
             <html outputDirectory=".castor/var/coverage-html"/>

@@ -1,0 +1,27 @@
+{
+  "name": "castor/functions",
+  "description": "PHP functions, wrapped and renamed so they are safer and more consistent",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Matias Navarro Carter",
+      "email": "mnavarrocarter@gmail.com",
+      "role": "Lead Maintainer"
+    }
+  ],
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Castor\\": "src"
+    },
+    "files": ["functions.php"]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Castor\\": "tests"
+    }
+  }
+}

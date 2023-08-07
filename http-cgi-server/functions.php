@@ -76,7 +76,7 @@ function serve(Context $ctx, Handler $handler, Logger $logger = null, bool $catc
             $logger->error($ctx, $error['message'], [
                 'type' => $error['type'],
                 'file' => $error['file'],
-                'line' => $error['line']
+                'line' => $error['line'],
             ]);
         }
 
@@ -188,7 +188,7 @@ function parseUri(array $server = null): Uri
 
     // If path info is not empty and is different to thr request URI, then path info has preference.
     $pathInfo = \current(\explode('?', $server['PATH_INFO'] ?? ''));
-    if ($pathInfo !== '' && $uri->getPath() !== $pathInfo) {
+    if ('' !== $pathInfo && $uri->getPath() !== $pathInfo) {
         $uri = $uri->withPath($pathInfo);
     }
 

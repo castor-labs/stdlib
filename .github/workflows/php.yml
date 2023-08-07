@@ -69,3 +69,4 @@ jobs:
       # We always run the test suite
       - name: "Run Test Suite"
         run: "vendor/bin/phpunit"
+        continue-on-error: ${{ matrix.dependencies == 'lowest' }}

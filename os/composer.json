@@ -1,0 +1,29 @@
+{
+  "name": "castor/os",
+  "description": "Functions and abstractions to interface with the operating system",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Matias Navarro Carter",
+      "email": "mnavarrocarter@gmail.com",
+      "role": "Lead Maintainer"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "castor/io": "*",
+    "castor/functions": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Castor\\": "src"
+    },
+    "files": ["functions.php"]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Castor\\": "tests"
+    }
+  }
+}

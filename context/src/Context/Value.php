@@ -37,9 +37,6 @@ final class Value implements Context
         $this->value = $value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function value(mixed $key): mixed
     {
         return $this->value;

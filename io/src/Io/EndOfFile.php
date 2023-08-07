@@ -19,6 +19,6 @@ namespace Castor\Io;
 /**
  * Class EndOfFile is thrown by Castor\Io\Reader instances when end-of-file is reached.
  */
-class EndOfFile extends \Exception
+class EndOfFile extends \RuntimeException
 {
 }

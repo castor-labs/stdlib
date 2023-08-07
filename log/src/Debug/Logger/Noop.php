@@ -16,12 +16,11 @@ declare(strict_types=1);
 
 namespace Castor\Debug\Logger;
 
-use Castor\Context;
 use Castor\Debug\Logger;
 
 final class Noop implements Logger
 {
-    public function log(Context $ctx, string $message, mixed ...$params): void
+    public function log(string $message, mixed ...$params): void
     {
         // Noop
     }
