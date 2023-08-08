@@ -79,6 +79,9 @@ case $CMD in
     install_dependencies
     stack_boot
   ;;
+  'php')
+    stack_exec main php "$@"
+  ;;
   'composer')
     stack_exec main composer "$@"
   ;;
@@ -95,6 +98,7 @@ case $CMD in
     stack_exec main ash
   ;;
   'pr')
+    stack_run main composer dump-autoload
     code_style_fix
     static_analysis
     test
