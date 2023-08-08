@@ -24,7 +24,7 @@ use Castor\Uuid;
  * This class is capable of parsing any UUID. You should use this class when you are not interested in the concrete
  * UUID version you are working with.
  *
- * However, if you require a particular UUID version, it's better to use the parse methods of the version classes.
+ * However, if you require a particular UUID version, it's better to use the parse methods of the particular version class.
  */
 class Unknown extends Base
 {
