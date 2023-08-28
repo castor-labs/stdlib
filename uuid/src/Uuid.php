@@ -24,7 +24,7 @@ use Castor\Crypto\Bytes;
  * This contract is purposefully simple and it only limits itself to the operations that are common to all UUIDs
  *
  * If you need to act upon a particular implementation (for instance, extract the time of a V1 UUID), you MUST
- * type hint to that particular version of use the "instanceof" operator on this interface.
+ * type hint to that particular version or use the "instanceof" operator on types implementing this interface.
  */
 interface Uuid
 {
@@ -44,4 +44,9 @@ interface Uuid
      * Checks whether two UUIDs are equal.
      */
     public function equals(Uuid $uuid): bool;
+
+    /**
+     * Returns the URN representation of the UUID.
+     */
+    public function toUrn(): string;
 }

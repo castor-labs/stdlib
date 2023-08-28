@@ -29,12 +29,20 @@ use Castor\Uuid;
  */
 abstract class Base implements Uuid, \Stringable, \JsonSerializable
 {
+    /** @var string The hex representation of a Nil UUID */
     protected const NIL_UUID = '00000000000000000000000000000000';
-    protected const HEX_LENGTH = 32;
-    protected const BYTES_LENGTH = 16;
-    protected const VERSION_BYTE = 6;
-    protected const VARIANT_BYTE = 8;
-    protected const VERSION_HEX = 6 * 2;
+
+    /** @var string The hex representation of a Max UUID */
+    protected const MAX_UUID = 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF';
+
+    /** @var int Length of bytes of an UUID */
+    protected const LEN = 16;
+
+    /** @var int The version byte */
+    protected const VEB = 6;
+
+    /** @var int The variant byte */
+    protected const VAB = 8;
 
     public function __construct(
         private readonly Bytes $bytes,
@@ -79,20 +87,47 @@ abstract class Base implements Uuid, \Stringable, \JsonSerializable
         return $this->toString();
     }
 
+    public function toUrn(): string
+    {
+        return 'urn:uuid:'.$this->toString();
+    }
+
+    protected static function fromBytes(Bytes|string $bytes): Uuid
+    {
+        if (\is_string($bytes)) {
+            $bytes = new Bytes($bytes);
+        }
+
+        if (self::LEN !== $bytes->len()) {
+            throw new ParsingError('UUID must have 16 bytes.');
+        }
+
+        $hex = $bytes->toHex();
+
+        if (self::NIL_UUID === $hex) {
+            return new Nil($bytes);
+        }
+
+        if (self::MAX_UUID === $hex) {
+            return new Max($bytes);
+        }
+
+        $v = $bytes[self::VEB] & 0xF0; // 1111 0000
+
+        return match ($v) {
+            0x30 => new V3($bytes), // 0011 0000
+            0x40 => new V4($bytes), // 0100 0000
+            0x50 => new V5($bytes), // 0101 0000
+            default => new Unknown($bytes)
+        };
+    }
+
     /**
      * @throws ParsingError
      */
-    protected static function parseVersion(string $uuid): Uuid
+    protected static function parse(string $uuid): Uuid
     {
         $hex = \str_replace('-', '', \strtolower(\trim($uuid)));
-
-        if (self::HEX_LENGTH !== \strlen($hex)) {
-            throw new ParsingError(\sprintf(
-                'Invalid hexadecimal length for UUID. Expected %d characters with no slashes but got %d.',
-                self::HEX_LENGTH,
-                \strlen($hex)
-            ));
-        }
 
         try {
             $bytes = Bytes::fromHex($hex);
@@ -100,17 +135,6 @@ abstract class Base implements Uuid, \Stringable, \JsonSerializable
             throw new ParsingError('Invalid hexadecimal in UUID.', previous: $e);
         }
 
-        if (self::NIL_UUID === $hex) {
-            return new Nil($bytes);
-        }
-
-        $version = $hex[self::VERSION_HEX];
-
-        return match ($version) {
-            '3' => new V3($bytes),
-            '4' => new V4($bytes),
-            '5' => new V5($bytes),
-            default => new Unknown($bytes),
-        };
+        return self::fromBytes($bytes);
     }
 }

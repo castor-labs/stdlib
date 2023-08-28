@@ -47,8 +47,8 @@ class V5Test extends TestCase
     public static function getParseErrorData(): array
     {
         return [
-            'less chars' => ['00010-0405-4607-8809-0a0b0c0d0e0f', 'Invalid hexadecimal length for UUID. Expected 32 characters with no slashes but got 29.'],
-            'more chars' => ['00010203-0405-4607-8809-0a0b0c0d0e0fdf4', 'Invalid hexadecimal length for UUID. Expected 32 characters with no slashes but got 35.'],
+            'less chars' => ['00010f-0405-4607-8809-0a0b0c0d0e0f', 'UUID must have 16 bytes.'],
+            'more chars' => ['0001003f-0405-4607-8809-0a0b0c0d0e0fdf', 'UUID must have 16 bytes.'],
             'wrong version' => ['7628f4de-01bd-494b-a84b-d7f900521218', 'Not a valid version 5 UUID.'],
             'invalid hex' => ['ZZlf8060-4a64-4f50-9e10-882cb74461f7', 'Invalid hexadecimal in UUID.'],
         ];

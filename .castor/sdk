@@ -46,7 +46,7 @@ function install_dependencies() {
 }
 
 function test() {
-    stack_run main vendor/bin/phpunit
+    stack_run main vendor/bin/phpunit "$@"
 }
 
 function static_analysis() {
@@ -88,11 +88,11 @@ case $CMD in
   'fmt')
     code_style_fix
   ;;
-  'analyze')
+  'types')
     static_analysis
   ;;
   'test')
-    test
+    test "$@"
   ;;
   'shell')
     stack_exec main ash

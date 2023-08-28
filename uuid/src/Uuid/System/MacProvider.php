@@ -14,23 +14,21 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Uuid;
+namespace Castor\Uuid\System;
 
 use Castor\Crypto\Bytes;
 
-/**
- * Nil represents the Nil or Empty UUID.
- *
- * This is a special UUID that is guaranteed not to be unique and has all of its bits set to 0
- */
-final class Nil extends Base
+interface MacProvider
 {
     /**
-     * @noinspection PhpDocMissingThrowsInspection
+     * Returns an array of mac addresses parsed from bytes.
+     *
+     * Implementors MUST NOT return an empty array.
+     *
+     * In case is possible for the implementation not to be able to find any MAC, you must compose a
+     * MacProvider\RandUniMultiCast as a fallback.
+     *
+     * @return Bytes[]
      */
-    public static function create(): Nil
-    {
-        // @noinspection PhpUnhandledExceptionInspection
-        return new self(Bytes::fromHex(self::NIL_UUID));
-    }
+    public function getMacAddresses(): array;
 }

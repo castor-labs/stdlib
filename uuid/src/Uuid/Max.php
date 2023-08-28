@@ -19,18 +19,18 @@ namespace Castor\Uuid;
 use Castor\Crypto\Bytes;
 
 /**
- * Nil represents the Nil or Empty UUID.
+ * Nil represents the Max or "full" UUID.
  *
- * This is a special UUID that is guaranteed not to be unique and has all of its bits set to 0
+ * This is a special UUID that is guaranteed not to be unique and has all its bits set to 1
  */
-final class Nil extends Base
+final class Max extends Base
 {
     /**
      * @noinspection PhpDocMissingThrowsInspection
      */
-    public static function create(): Nil
+    public static function create(): Max
     {
         // @noinspection PhpUnhandledExceptionInspection
-        return new self(Bytes::fromHex(self::NIL_UUID));
+        return new self(Bytes::fromHex(self::MAX_UUID));
     }
 }

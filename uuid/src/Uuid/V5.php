@@ -22,7 +22,9 @@ use Castor\Uuid;
 /**
  * V5 represents a version 4 UUID.
  *
- * Version 5 UUIDS are the first 16 bytes of the sha1 hash of another UUID (namespace) plus any string
+ * Version 5 UUIDS are the first 16 bytes of the sha1 hash of another UUID (namespace) plus any string.
+ *
+ * Version 5 UUIDs have their most significant bits on the 7th octet set to 0101 (x50)
  */
 final class V5 extends Base
 {
@@ -33,7 +35,7 @@ final class V5 extends Base
      */
     public static function parse(string $uuid): self
     {
-        $v5 = self::parseVersion($uuid);
+        $v5 = parent::parse($uuid);
         if (!$v5 instanceof self) {
             throw new ParsingError('Not a valid version 5 UUID.');
         }
@@ -41,17 +43,27 @@ final class V5 extends Base
         return $v5;
     }
 
+    public static function fromBytes(Bytes|string $bytes): self
+    {
+        $uuid = parent::fromBytes($bytes);
+        if (!$uuid instanceof self) {
+            throw new ParsingError('Not a valid version 5 UUID.');
+        }
+
+        return $uuid;
+    }
+
     public static function create(Uuid $namespace, string $name): self
     {
         $bytes = @\hash(self::HASHING_ALGO, $namespace->getBytes()->asString().$name, true);
-        $bytes = \substr($bytes, 0, self::BYTES_LENGTH);
+        $bytes = new Bytes(\substr($bytes, 0, self::LEN));
 
-        // We set the version to 5
-        $bytes[self::VERSION_BYTE] = \chr(\ord($bytes[self::VERSION_BYTE]) & 0x0F | 0x50);
+        // We set the 6th octet to 0101 XXXX (version 5)
+        $bytes[self::VEB] = $bytes[self::VEB] & 0x0F | 0x50; // // AND 0000 1111 OR 0101 0000
 
         // Set buts 6-7 to 10
-        $bytes[self::VARIANT_BYTE] = \chr(\ord($bytes[self::VARIANT_BYTE]) & 0x3F | 0x80);
+        $bytes[self::VAB] = $bytes[self::VAB] & 0x3F | 0x80;
 
-        return new self(new Bytes($bytes));
+        return new self($bytes);
     }
 }

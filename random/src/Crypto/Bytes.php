@@ -19,30 +19,35 @@ namespace Castor\Crypto;
 use Castor\Encoding\Hex;
 use Castor\Encoding\InputError;
 use Castor\Io;
+use Castor\Str;
+
+use function Castor\Bytes\len;
 
 /**
  * Bytes is a value object that provides convenience operations over a byte-string.
+ *
+ * @implements \ArrayAccess<int,int>
  */
-final class Bytes implements Io\Reader
+class Bytes implements Io\Reader, \ArrayAccess
 {
     public function __construct(
-        private readonly string $bytes
+        protected string $bytes
     ) {
     }
 
-    public static function fromUint8(int ...$uint8): self
+    public static function fromUint8(int ...$uint8): static
     {
-        return new self(\implode('', \array_map('chr', $uint8)));
+        return new static(\implode('', \array_map('chr', $uint8)));
     }
 
     /**
      * @throws InputError
      */
-    public static function fromHex(string $hex): Bytes
+    public static function fromHex(string $hex): static
     {
         $bytes = Hex\decode($hex);
 
-        return new self($bytes);
+        return new static($bytes);
     }
 
     public function asString(): string
@@ -75,5 +80,76 @@ final class Bytes implements Io\Reader
     public function toUint8Array(): array
     {
         return \array_values(\unpack('C*', $this->bytes));
+    }
+
+    public function len(): int
+    {
+        return len($this->bytes);
+    }
+
+    /**
+     * @param int $offset
+     */
+    public function offsetExists(mixed $offset): bool
+    {
+        if (!\is_int($offset)) {
+            throw new \InvalidArgumentException('Offset must be an int');
+        }
+
+        return ($this->bytes[$offset] ?? null) !== null;
+    }
+
+    /**
+     * @param int $offset
+     */
+    public function offsetGet(mixed $offset): int
+    {
+        if (!\is_int($offset)) {
+            throw new \InvalidArgumentException('Offset must be an int');
+        }
+
+        $b = $this->bytes[$offset] ?? null;
+        if (null === $b) {
+            throw new \OutOfBoundsException('Offset ');
+        }
+
+        return \ord($b);
+    }
+
+    /**
+     * @param int $offset
+     * @param int $value
+     */
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        if (!\is_int($offset)) {
+            throw new \InvalidArgumentException('Offset must be an int');
+        }
+
+        if (!\is_int($value)) {
+            throw new \InvalidArgumentException('Value must be an int');
+        }
+
+        if ($value > 255 || $value < 0) {
+            throw new \InvalidArgumentException('Value must be an integer between 0 and 255');
+        }
+
+        if (!$this->offsetExists($offset)) {
+            throw new \OutOfBoundsException("Offset {$offset} does not exist");
+        }
+
+        $this->bytes[$offset] = \chr($value);
+    }
+
+    /**
+     * @param int $offset
+     */
+    public function offsetUnset(mixed $offset): void
+    {
+        if (!\is_int($offset)) {
+            throw new \InvalidArgumentException('Offset must be an int');
+        }
+
+        $this->bytes = Str\slice($this->bytes, 0, $offset).Str\slice($this->bytes, $offset + 1);
     }
 }

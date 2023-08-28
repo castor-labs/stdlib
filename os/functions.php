@@ -69,6 +69,16 @@ function getEnv(string $env): string
     return lookupEnv($env) ?? '';
 }
 
+/**
+ * @return string[]
+ */
+function args(): array
+{
+    global $argv;
+
+    return $argv;
+}
+
 function getCwd(): string
 {
     $result = php_getcwd();

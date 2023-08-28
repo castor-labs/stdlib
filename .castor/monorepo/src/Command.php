@@ -28,8 +28,6 @@ class Command
      * @param Event $event
      * @return void
      *
-     * @throws JsonException
-     *
      * TODO: Include dependencies that are not castor related
      */
     public static function syncProjects(Event $event): void

@@ -40,6 +40,11 @@ function filter(array $array, \Closure $func = null): array
     return \array_filter($array, $func);
 }
 
+function walk(array &$array, \Closure $func): void
+{
+    \array_walk($array, $func);
+}
+
 /**
  * @psalm-pure
  */
@@ -116,4 +121,9 @@ function contains(array $array, mixed $value): bool
 function merge(array ...$arrays): array
 {
     return \array_merge(...$arrays);
+}
+
+function slice(array $array, int $offset, ?int $length = null): array
+{
+    return \array_slice($array, $offset, $length);
 }

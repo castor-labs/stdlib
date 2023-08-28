@@ -36,12 +36,12 @@ class Unknown extends Base
      * If you want to conditionally act upon the version parsed, you can use the "instanceof" keyword to figure out the
      * version you are working with.
      *
-     * Possible return types can be "Nil", "V3", "V4", "V5" and "Unknown"
+     * Possible return types can be "Nil", "Max", "V3", "V4", "V5" and "Unknown"
      *
      * @throws ParsingError
      */
     public static function parse(string $uuid): Uuid
     {
-        return self::parseVersion($uuid);
+        return parent::parse($uuid);
     }
 }

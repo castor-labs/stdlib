@@ -34,10 +34,13 @@ class V4Test extends TestCase
         $this->assertSame('fa799c4f-e29b-43e0-908d-aae2ee32e549', $uuid->toString());
     }
 
-    public function testParse(): void
+    /**
+     * @dataProvider getParseData
+     */
+    public function testParse(string $v4): void
     {
         $this->expectNotToPerformAssertions();
-        V4::parse('fa06067f-602d-404a-a34c-45c6a7744011');
+        V4::parse($v4);
     }
 
     /**
@@ -55,8 +58,8 @@ class V4Test extends TestCase
     public static function getParseErrorData(): array
     {
         return [
-            'less chars' => ['00010-0405-4607-8809-0a0b0c0d0e0f', 'Invalid hexadecimal length for UUID. Expected 32 characters with no slashes but got 29.'],
-            'more chars' => ['00010203-0405-4607-8809-0a0b0c0d0e0fdf4', 'Invalid hexadecimal length for UUID. Expected 32 characters with no slashes but got 35.'],
+            'less chars' => ['00010f-0405-4607-8809-0a0b0c0d0e0f', 'UUID must have 16 bytes.'],
+            'more chars' => ['00010203-0405-4607-8809-0a0b0c0d0e0fdf', 'UUID must have 16 bytes.'],
             'wrong version' => ['5bbf8060-4a64-1f50-9e10-882cb74461f7', 'Not a valid version 4 UUID.'],
             'invalid hex' => ['ZZlf8060-4a64-4f50-9e10-882cb74461f7', 'Invalid hexadecimal in UUID.'],
         ];
@@ -84,5 +87,14 @@ class V4Test extends TestCase
         $this->assertTrue($v4->equals(\unserialize($serialized)));
         $this->assertSame('{"uuid":"fa06067f-602d-404a-a34c-45c6a7744011"}', $json);
         $this->assertSame('fa06067f-602d-404a-a34c-45c6a7744011', (string) $v4);
+    }
+
+    public function getParseData(): array
+    {
+        return [
+            ['fa06067f-602d-404a-a34c-45c6a7744011'],
+            ['a959e53b-3b3f-4995-a95b-e117ff790662'],
+            ['0f342954-20e6-4431-9445-630ad3e8c48a'],
+        ];
     }
 }

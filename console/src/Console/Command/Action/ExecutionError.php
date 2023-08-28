@@ -14,11 +14,12 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Uuid\System;
+namespace Castor\Console\Command\Action;
 
-use Castor\Crypto\Bytes;
-
-interface Node
+class ExecutionError extends \RuntimeException
 {
-    public function getNode(): Bytes;
+    public function __construct(string $message = '', int $code = 1, ?\Throwable $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+    }
 }

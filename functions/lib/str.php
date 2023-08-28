@@ -18,6 +18,8 @@ namespace Castor\Str;
 
 use Castor\Bytes;
 
+use function ltrim as native_ltrim;
+use function rtrim as native_rtrim;
 use function trim as native_trim;
 
 const TITLE_SEPARATORS = " \t\r\n\f\v";
@@ -25,8 +27,18 @@ const TRIM_CHARS = " \t\n\r\0\x0B";
 
 /**
  * @psalm-pure
+ *
+ * @deprecated use fmt instead
  */
 function format(string $format, mixed ...$values): string
+{
+    return \sprintf($format, ...$values);
+}
+
+/**
+ * @psalm-pure
+ */
+function fmt(string $format, mixed ...$values): string
 {
     return \sprintf($format, ...$values);
 }
@@ -90,6 +102,22 @@ function index(string $string, string $substring): int
 function trim(string $string, string $chars = TRIM_CHARS): string
 {
     return native_trim($string, $chars);
+}
+
+/**
+ * @psalm-pure
+ */
+function ltrim(string $string, string $chars = TRIM_CHARS): string
+{
+    return native_ltrim($string, $chars);
+}
+
+/**
+ * @psalm-pure
+ */
+function rtrim(string $string, string $chars = TRIM_CHARS): string
+{
+    return native_rtrim($string, $chars);
 }
 
 /**
