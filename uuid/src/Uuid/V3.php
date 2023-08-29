@@ -26,7 +26,7 @@ use Castor\Uuid;
  *
  * Version 3 UUIDs have their most significant bits on the 7th octet set to 0011 (x30)
  */
-final class V3 extends Base
+final class V3 extends Any
 {
     private const HASHING_ALGO = 'md5';
 
@@ -57,7 +57,7 @@ final class V3 extends Base
     {
         $bytes = new Bytes(@\hash(self::HASHING_ALGO, $namespace->getBytes()->asString().$name, true));
 
-        // We set the 6th octet to 0011 XXXX (version 3)
+        // We set the 7th octet to 0011 XXXX (version 3)
         $bytes[self::VEB] = $bytes[self::VEB] & 0x0F | 0x30; // AND 0000 1111 OR 0011 0000
 
         // Set buts 6-7 to 10

@@ -28,7 +28,7 @@ use Castor\Io\Reader;
  *
  * Version 4 UUIDs have their most significant bits on the 7th octet set to 0100 (x40)
  */
-final class V4 extends Base
+final class V4 extends Any
 {
     /**
      * @throws ParsingError
@@ -59,7 +59,7 @@ final class V4 extends Base
 
         $bytes = new Bytes($random->read(self::LEN));
 
-        // We set the 6th octet to 0100 XXXX (version 4)
+        // We set the 7th octet to 0100 XXXX (version 4)
         $bytes[self::VEB] = $bytes[self::VEB] & 0x0F | 0x40; // AND 0000 1111 OR 0100 0000
         // Set the variant to 6-7 to 10
         $bytes[self::VAB] = $bytes[self::VAB] & 0x3F | 0x80;

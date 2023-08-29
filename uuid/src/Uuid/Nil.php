@@ -23,14 +23,13 @@ use Castor\Crypto\Bytes;
  *
  * This is a special UUID that is guaranteed not to be unique and has all of its bits set to 0
  */
-final class Nil extends Base
+final class Nil extends Any
 {
     /**
-     * @noinspection PhpDocMissingThrowsInspection
+     * @noinspection PhpUnhandledExceptionInspection
      */
     public static function create(): Nil
     {
-        // @noinspection PhpUnhandledExceptionInspection
         return new self(Bytes::fromHex(self::NIL_UUID));
     }
 }

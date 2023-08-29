@@ -23,14 +23,13 @@ use Castor\Crypto\Bytes;
  *
  * This is a special UUID that is guaranteed not to be unique and has all its bits set to 1
  */
-final class Max extends Base
+final class Max extends Any
 {
     /**
-     * @noinspection PhpDocMissingThrowsInspection
+     * @noinspection PhpUnhandledExceptionInspection
      */
     public static function create(): Max
     {
-        // @noinspection PhpUnhandledExceptionInspection
         return new self(Bytes::fromHex(self::MAX_UUID));
     }
 }

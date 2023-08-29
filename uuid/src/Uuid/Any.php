@@ -21,19 +21,23 @@ use Castor\Encoding\InputError;
 use Castor\Uuid;
 
 /**
- * Base class for all UUIDs.
+ * Represents a UUID of any format.
  *
- * The stability of this API is not guaranteed. You are discouraged to extend this class.
+ * This class contains common operations available to all UUIDs. It's also capable of parsing any UUID.
+ * You should use this class when you are not interested in the concrete UUID version you are working with.
  *
- * @internal
+ * However, if you require a particular UUID version, it's better to use the parse methods of the particular
+ * version class, as they will ensure you have a correct version.
+ *
+ * The stability of this API is not guaranteed for extension. You are discouraged to extend this class.
  */
-abstract class Base implements Uuid, \Stringable, \JsonSerializable
+class Any implements Uuid, \Stringable, \JsonSerializable
 {
     /** @var string The hex representation of a Nil UUID */
     protected const NIL_UUID = '00000000000000000000000000000000';
 
     /** @var string The hex representation of a Max UUID */
-    protected const MAX_UUID = 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF';
+    protected const MAX_UUID = 'ffffffffffffffffffffffffffffffff';
 
     /** @var int Length of bytes of an UUID */
     protected const LEN = 16;
@@ -44,7 +48,7 @@ abstract class Base implements Uuid, \Stringable, \JsonSerializable
     /** @var int The variant byte */
     protected const VAB = 8;
 
-    public function __construct(
+    protected function __construct(
         private readonly Bytes $bytes,
     ) {
     }
@@ -61,7 +65,7 @@ abstract class Base implements Uuid, \Stringable, \JsonSerializable
 
     public function __unserialize(array $data): void
     {
-        $this->bytes = Unknown::parse($data[0])->getBytes();
+        $this->bytes = static::parse($data[0])->getBytes();
     }
 
     public function toString(): string
@@ -92,7 +96,17 @@ abstract class Base implements Uuid, \Stringable, \JsonSerializable
         return 'urn:uuid:'.$this->toString();
     }
 
-    protected static function fromBytes(Bytes|string $bytes): Uuid
+    /**
+     * Creates a UUID from raw bytes.
+     *
+     * The return type will always implement Uuid, but it could be any of the implementations available in this library.
+     *
+     * If you want to conditionally act upon the version parsed, you can use the "instanceof" keyword to figure out the
+     * version you are working with.
+     *
+     * Possible return types can be "Nil", "Max", "V3", "V4", "V5" and "Any"
+     */
+    public static function fromBytes(Bytes|string $bytes): Uuid
     {
         if (\is_string($bytes)) {
             $bytes = new Bytes($bytes);
@@ -118,14 +132,21 @@ abstract class Base implements Uuid, \Stringable, \JsonSerializable
             0x30 => new V3($bytes), // 0011 0000
             0x40 => new V4($bytes), // 0100 0000
             0x50 => new V5($bytes), // 0101 0000
-            default => new Unknown($bytes)
+            default => new self($bytes)
         };
     }
 
     /**
-     * @throws ParsingError
+     * Parses a UUID.
+     *
+     * The return type will always implement Uuid, but it could be any of the implementations available in this library.
+     *
+     * If you want to conditionally act upon the version parsed, you can use the "instanceof" keyword to figure out the
+     * version you are working with.
+     *
+     * Possible return types can be "Nil", "Max", "V3", "V4", "V5" and "Any"
      */
-    protected static function parse(string $uuid): Uuid
+    public static function parse(string $uuid): Uuid
     {
         $hex = \str_replace('-', '', \strtolower(\trim($uuid)));
 
