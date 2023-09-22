@@ -38,7 +38,7 @@ class FunctionsTest extends TestCase
      */
     public function testParse(string $uuid, string $type): void
     {
-        $parsed = parse($uuid);
+        $parsed = \parse($uuid);
         $this->assertInstanceOf($type, $parsed);
     }
 
