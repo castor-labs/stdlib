@@ -14,12 +14,18 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Security\Policy;
+namespace Castor\Security;
 
-/**
- * The policy checker can be implemented by identities that support policy checking.
- */
-interface Checker
+#[\Attribute(\Attribute::TARGET_FUNCTION | \Attribute::TARGET_METHOD)]
+class Policy
 {
-    public function checkIt(Can $can): bool;
+    /**
+     * @param Policy[]|array $andCan
+     * @param Policy[]|array $orCan
+     */
+    public function __construct(
+        public array $andCan = [],
+        public array $orCan = []
+    ) {
+    }
 }

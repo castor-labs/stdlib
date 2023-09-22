@@ -16,16 +16,16 @@ declare(strict_types=1);
 
 namespace Castor\Security\Policy;
 
-#[\Attribute(\Attribute::TARGET_FUNCTION | \Attribute::TARGET_METHOD)]
-class Can
+use Castor\Security\Policy;
+
+/**
+ * The Authorized MUST be implemented by Identities that support policy checking.
+ */
+interface Authorizer
 {
     /**
-     * @param Can[]|string[] $andX
-     * @param Can[]|string[] $orX
+     * @param Policy $policy
+     * @return bool
      */
-    public function __construct(
-        public array $andX = [],
-        public array $orX = []
-    ) {
-    }
+    public function isAuthorized(Policy $policy): bool;
 }
