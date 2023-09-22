@@ -14,14 +14,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Net\Http\tests\Net\Http;
+namespace Castor\Net\Http;
 
 use Castor\Context;
-use Castor\Net\Http\Handler;
-use Castor\Net\Http\Recorder;
-use Castor\Net\Http\Request;
-use Http\Pipeline;
-use Http\Pipeline\HandlerFactory;
+use Castor\Net\Http\Pipeline\HandlerFactory;
 use PHPUnit\Framework\TestCase;
 
 /**
