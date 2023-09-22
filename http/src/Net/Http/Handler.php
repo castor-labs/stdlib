@@ -23,7 +23,7 @@ interface Handler
     /**
      * Handles an HTTP request.
      *
-     * @throws \Throwable if any unexpected error occurs
+     * @throws HandlerError if an HTTP handler error occurs
      */
     public function handle(Context $ctx, Request $request, ResponseWriter $writer): void;
 }

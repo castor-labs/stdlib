@@ -19,7 +19,7 @@ namespace Castor\Uuid;
 use Castor\Crypto\Bytes;
 
 /**
- * Nil represents the Nil or Empty UUID.
+ * Represents the Nil or "Empty" UUID.
  *
  * This is a special UUID that is guaranteed not to be unique and has all of its bits set to 0
  */

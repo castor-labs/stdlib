@@ -30,6 +30,8 @@ interface Uuid
 {
     /**
      * Returns the underlying bytes that make up this UUID.
+     *
+     * Implementors MUST NOT return the original reference stored in the UUID.
      */
     public function getBytes(): Bytes;
 

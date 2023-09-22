@@ -87,6 +87,11 @@ class Bytes implements Io\Reader, \ArrayAccess
         return len($this->bytes);
     }
 
+    public function slice(int $offset, int $length = 0): Bytes
+    {
+        return new Bytes(Str\slice($this->bytes, $offset, $length));
+    }
+
     /**
      * @param int $offset
      */

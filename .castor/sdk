@@ -45,6 +45,10 @@ function install_dependencies() {
     stack_run main composer install
 }
 
+function sync() {
+    stack_exec main composer sync
+}
+
 function test() {
     stack_run main vendor/bin/phpunit "$@"
 }
@@ -91,14 +95,21 @@ case $CMD in
   'types')
     static_analysis
   ;;
+  'bench')
+    stack_exec main ./vendor/bin/phpbench run
+  ;;
   'test')
     test "$@"
   ;;
   'shell')
     stack_exec main ash
   ;;
+  'sync')
+    sync
+    sdk composer dump-autoload
+  ;;
   'pr')
-    stack_run main composer dump-autoload
+    sync
     code_style_fix
     static_analysis
     test

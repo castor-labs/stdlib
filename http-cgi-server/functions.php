@@ -23,9 +23,9 @@ use Castor\Debug\Logger;
 use Castor\Err;
 use Castor\Io\Error;
 use Castor\Net\Http;
+use Castor\Net\Http\Controller;
 use Castor\Net\Http\Cookie;
 use Castor\Net\Http\Cookies;
-use Castor\Net\Http\Handler;
 use Castor\Net\Http\Headers;
 use Castor\Net\Http\Method;
 use Castor\Net\Http\Request;
@@ -45,7 +45,7 @@ use Castor\Str;
  *
  * @throws \Throwable
  */
-function serve(Context $ctx, Handler $handler, Logger $logger = null, bool $catchErrors = false, bool $ignoreUserAbort = true): void
+function serve(Context $ctx, Controller $handler, Logger $logger = null, bool $catchErrors = false, bool $ignoreUserAbort = true): void
 {
     $logger = $logger ?? new Logger\Noop();
     $logger = new LevelLogger(new AppLogger($logger, 'CGI'));

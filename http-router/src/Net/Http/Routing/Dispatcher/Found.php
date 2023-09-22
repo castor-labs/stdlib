@@ -14,23 +14,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Uuid\System;
+namespace Castor\Net\Http\Routing\Dispatcher;
 
-use PHPUnit\Framework\TestCase;
-
-/**
- * @internal
- *
- * @coversNothing
- */
-class DefaultsTest extends TestCase
+class Found
 {
-    public function testGetMacAddresses(): void
-    {
-        $macs = Defaults::global()->getMacAddresses();
-        $this->assertGreaterThan(0, $macs);
-        foreach ($macs as $mac) {
-            $this->assertSame(6, $mac->len());
-        }
+    /**
+     * @param array<string,string> $vars
+     */
+    public function __construct(
+        public readonly string $handler,
+        public readonly array $vars = []
+    ) {
     }
 }

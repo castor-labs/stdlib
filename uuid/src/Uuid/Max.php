@@ -19,9 +19,9 @@ namespace Castor\Uuid;
 use Castor\Crypto\Bytes;
 
 /**
- * Nil represents the Max or "full" UUID.
+ * Represents the Max or "full" UUID.
  *
- * This is a special UUID that is guaranteed not to be unique and has all its bits set to 1
+ * This is a special UUID that is guaranteed not to be unique and has all of its bits set to 1
  */
 final class Max extends Any
 {

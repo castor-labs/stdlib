@@ -1,0 +1,29 @@
+{
+  "name": "castor/http-pipeline",
+  "description": "Middleware pipeline for Castor HTTP handlers",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Matias Navarro Carter",
+      "email": "mnavarrocarter@gmail.com",
+      "role": "Lead Maintainer"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "castor/http": "*",
+    "castor/functions": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Castor\\": "src"
+    },
+    "files": ["functions.php"]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Castor\\": "tests"
+    }
+  }
+}

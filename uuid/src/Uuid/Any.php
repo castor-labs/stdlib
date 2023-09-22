@@ -18,6 +18,7 @@ namespace Castor\Uuid;
 
 use Castor\Crypto\Bytes;
 use Castor\Encoding\InputError;
+use Castor\Str;
 use Castor\Uuid;
 
 /**
@@ -75,7 +76,7 @@ class Any implements Uuid, \Stringable, \JsonSerializable
 
     public function getBytes(): Bytes
     {
-        return $this->bytes;
+        return clone $this->bytes;
     }
 
     public function equals(Uuid $uuid): bool
@@ -105,6 +106,8 @@ class Any implements Uuid, \Stringable, \JsonSerializable
      * version you are working with.
      *
      * Possible return types can be "Nil", "Max", "V3", "V4", "V5" and "Any"
+     *
+     * @throws ParsingError if the bytes are invalid
      */
     public static function fromBytes(Bytes|string $bytes): Uuid
     {
@@ -116,23 +119,18 @@ class Any implements Uuid, \Stringable, \JsonSerializable
             throw new ParsingError('UUID must have 16 bytes.');
         }
 
-        $hex = $bytes->toHex();
-
-        if (self::NIL_UUID === $hex) {
-            return new Nil($bytes);
-        }
-
-        if (self::MAX_UUID === $hex) {
-            return new Max($bytes);
-        }
-
         $v = $bytes[self::VEB] & 0xF0; // 1111 0000
 
         return match ($v) {
+            0x10 => new V1($bytes), // 0001 0000
             0x30 => new V3($bytes), // 0011 0000
             0x40 => new V4($bytes), // 0100 0000
             0x50 => new V5($bytes), // 0101 0000
-            default => new self($bytes)
+            default => match (true) {
+                self::MAX_UUID === $bytes->toHex() => new Max($bytes),
+                self::NIL_UUID === $bytes->toHex() => new Nil($bytes),
+                default => new Any($bytes)
+            }
         };
     }
 
@@ -148,10 +146,10 @@ class Any implements Uuid, \Stringable, \JsonSerializable
      */
     public static function parse(string $uuid): Uuid
     {
-        $hex = \str_replace('-', '', \strtolower(\trim($uuid)));
+        $uuid = Str\toLower(Str\replace($uuid, '-', ''));
 
         try {
-            $bytes = Bytes::fromHex($hex);
+            $bytes = Bytes::fromHex($uuid);
         } catch (InputError $e) {
             throw new ParsingError('Invalid hexadecimal in UUID.', previous: $e);
         }

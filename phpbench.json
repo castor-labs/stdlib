@@ -4,6 +4,7 @@
     "runner.file_pattern": "*Bench.php",
     "runner.path": [
         "functions/tests",
-        "http-client/tests"
+        "http-client/tests",
+        "uuid/tests"
     ]
 }

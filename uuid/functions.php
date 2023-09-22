@@ -16,9 +16,12 @@ declare(strict_types=1);
 
 namespace Castor\Uuid;
 
+use Castor\Crypto\Bytes;
 use Castor\Uuid;
 
 /**
+ * Parses a UUI from a string.
+ *
  * @throws ParsingError
  */
 function parse(string $uuid): Uuid
@@ -26,6 +29,17 @@ function parse(string $uuid): Uuid
     return Any::parse($uuid);
 }
 
+/**
+ * Creates a UUID from the raw bytes.
+ */
+function fromBytes(Bytes|string $bytes): Uuid
+{
+    return Any::fromBytes($bytes);
+}
+
+/**
+ * Checks whether a UUID is valid.
+ */
 function isValid(string $uuid): bool
 {
     try {

@@ -22,11 +22,9 @@ final class System implements Clock
 {
     private static ?System $global = null;
 
-    private \DateTimeZone $tz;
-
-    public function __construct(\DateTimeZone $tz)
-    {
-        $this->tz = $tz;
+    public function __construct(
+        public readonly \DateTimeZone $tz
+    ) {
     }
 
     public static function make(string $tz = 'UTC'): System

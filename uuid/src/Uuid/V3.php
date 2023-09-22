@@ -31,6 +31,8 @@ final class V3 extends Any
     private const HASHING_ALGO = 'md5';
 
     /**
+     * Parses a UUID Version 3 from the string representation.
+     *
      * @throws ParsingError
      */
     public static function parse(string $uuid): self
@@ -43,6 +45,9 @@ final class V3 extends Any
         return $v3;
     }
 
+    /**
+     * Creates a UUID Version 3 from the raw bytes.
+     */
     public static function fromBytes(Bytes|string $bytes): self
     {
         $uuid = parent::fromBytes($bytes);

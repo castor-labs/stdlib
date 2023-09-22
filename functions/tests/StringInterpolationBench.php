@@ -16,10 +16,6 @@ declare(strict_types=1);
 
 namespace Castor;
 
-use PhpBench\Benchmark\Metadata\Annotations\Iterations;
-use PhpBench\Benchmark\Metadata\Annotations\ParamProviders;
-use PhpBench\Benchmark\Metadata\Annotations\Revs;
-
 class StringInterpolationBench
 {
     private const TEMPLATE = '%s %s';

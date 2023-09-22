@@ -14,9 +14,9 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Uuid\System;
+namespace Castor\IDL\Http;
 
-interface Clock
+#[\Attribute(\Attribute::TARGET_PROPERTY)]
+class Label
 {
-    public function now(): \DateTimeImmutable;
 }

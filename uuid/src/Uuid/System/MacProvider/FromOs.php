@@ -101,11 +101,9 @@ final class FromOs implements MacProvider
 
             Arr\walk($addressPaths, static function (string $addressPath) use (&$macs): void {
                 if (\is_readable($addressPath)) {
-                    $macs[] = \file_get_contents($addressPath);
+                    $macs[] = \trim(\file_get_contents($addressPath));
                 }
             });
-
-            $macs = Arr\map($macs, trim(...));
 
             // Remove invalid entries.
             $macs = Arr\filter($macs, static function (string $address) {
@@ -115,9 +113,7 @@ final class FromOs implements MacProvider
         }
 
         // Map any macs we have
-        return Arr\map($macs, function (string $mac) {
-            return Bytes::fromHex($this->cleanMac($mac));
-        });
+        return Arr\values(Arr\map($macs, fn (string $mac) => Bytes::fromHex($this->cleanMac($mac))));
     }
 
     /**
@@ -179,7 +175,7 @@ final class FromOs implements MacProvider
             }
         }
 
-        return $macs;
+        return Arr\values($macs);
     }
 
     private function cleanMac(string $mac): string

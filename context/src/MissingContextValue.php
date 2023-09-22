@@ -21,7 +21,7 @@ namespace Castor;
  */
 class MissingContextValue extends \LogicException
 {
-    public static function forKey(string $key): MissingContextValue
+    public static function forKey(mixed $key): MissingContextValue
     {
         return new self(\sprintf('Missing context value for key "%s"', $key));
     }
