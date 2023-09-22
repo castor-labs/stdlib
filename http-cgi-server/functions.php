@@ -17,13 +17,11 @@ declare(strict_types=1);
 namespace Castor\Net\Http\Cgi;
 
 use Castor\Context;
-use Castor\Debug\AppLogger;
 use Castor\Debug\LevelLogger;
 use Castor\Debug\Logger;
 use Castor\Err;
 use Castor\Io\Error;
 use Castor\Net\Http;
-use Castor\Net\Http\Controller;
 use Castor\Net\Http\Cookie;
 use Castor\Net\Http\Cookies;
 use Castor\Net\Http\Headers;
@@ -45,7 +43,7 @@ use Castor\Str;
  *
  * @throws \Throwable
  */
-function serve(Context $ctx, Controller $handler, Logger $logger = null, bool $catchErrors = false, bool $ignoreUserAbort = true): void
+function serve(Context $ctx, Http\Handler $handler, Logger $logger = null, bool $catchErrors = false, bool $ignoreUserAbort = true): void
 {
     $logger = $logger ?? new Logger\Noop();
     $logger = new LevelLogger(new AppLogger($logger, 'CGI'));
