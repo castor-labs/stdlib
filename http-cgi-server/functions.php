@@ -46,7 +46,7 @@ use Castor\Str;
 function serve(Context $ctx, Http\Handler $handler, Logger $logger = null, bool $catchErrors = false, bool $ignoreUserAbort = true): void
 {
     $logger = $logger ?? new Logger\Noop();
-    $logger = new LevelLogger(new AppLogger($logger, 'CGI'));
+    $logger = new LevelLogger($logger);
 
     // This will continue script execution even if the client disconnects
     \ignore_user_abort($ignoreUserAbort);
@@ -71,7 +71,7 @@ function serve(Context $ctx, Http\Handler $handler, Logger $logger = null, bool 
 
         $errors = Err\collect($e);
         foreach ($errors as $error) {
-            $logger->error($ctx, $error['message'], [
+            $logger->error($error['message'], [
                 'type' => $error['type'],
                 'file' => $error['file'],
                 'line' => $error['line'],
