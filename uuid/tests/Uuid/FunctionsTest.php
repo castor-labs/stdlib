@@ -18,6 +18,8 @@ namespace Castor\Uuid;
 
 use PHPUnit\Framework\TestCase;
 
+use function Castor\Uuid\parse as parseUuid;
+
 /**
  * @internal
  *
@@ -38,7 +40,7 @@ class FunctionsTest extends TestCase
      */
     public function testParse(string $uuid, string $type): void
     {
-        $parsed = \parse($uuid);
+        $parsed = parseUuid($uuid);
         $this->assertInstanceOf($type, $parsed);
     }
 
