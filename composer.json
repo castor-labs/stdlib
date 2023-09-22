@@ -15,14 +15,14 @@
     ],
     "autoload": {
         "psr-4": {
-            "Castor\\": ["http/src", "os/src", "http-pipeline/src", "uuid/src", "context/src", "log/src", "http-router/src", "idl-core/src", "http-cgi-server/src", "http-client/src", "functions/src", "random/src", "uri/src", "console/src", "io/src", "time/src"]
+            "Castor\\": ["http/src", "os/src", "http-pipeline/src", "uuid/src", "context/src", "log/src", "http-router/src", "idl-core/src", "http-cgi-server/src", "http-client/src", "functions/src", "random/src", "uri/src", "console/src", "io/src", "time/src", "security/src"]
         },
-        "files": ["http/functions.php", "os/functions.php", "http-pipeline/functions.php", "uuid/functions.php", "context/functions.php", "log/functions.php", "http-router/functions.php", "idl-core/functions.php", "http-cgi-server/functions.php", "http-client/functions.php", "functions/functions.php", "uri/functions.php", "console/functions.php", "io/functions.php"]
+        "files": ["http/functions.php", "os/functions.php", "http-pipeline/functions.php", "uuid/functions.php", "context/functions.php", "log/functions.php", "http-router/functions.php", "idl-core/functions.php", "http-cgi-server/functions.php", "http-client/functions.php", "functions/functions.php", "uri/functions.php", "console/functions.php", "io/functions.php", "security/functions.php"]
     },
     "autoload-dev": {
         "psr-4": {
             "Castor\\Monorepo\\": [".castor/monorepo/src", ".castor/monorepo/tests"],
-            "Castor\\": ["http/tests", "os/tests", "http-pipeline/tests", "uuid/tests", "context/tests", "log/tests", "http-router/tests", "idl-core/tests", "http-cgi-server/tests", "http-client/tests", "functions/tests", "random/tests", "uri/tests", "console/tests", "io/tests", "time/tests"]
+            "Castor\\": ["http/tests", "os/tests", "http-pipeline/tests", "uuid/tests", "context/tests", "log/tests", "http-router/tests", "idl-core/tests", "http-cgi-server/tests", "http-client/tests", "functions/tests", "random/tests", "uri/tests", "console/tests", "io/tests", "time/tests", "security/tests"]
         }
     },
     "require": {
