@@ -14,7 +14,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\Net\Http;
+namespace Castor\Net\Http\Routing;
 
 use Castor\Context;
 use Castor\MissingContextValue;
@@ -31,7 +31,7 @@ enum CtxKey
 
 function withResult(Context $ctx, Found|MethodNotAllowed|NotFound $result): Context
 {
-    return Context\withValue($ctx, \Castor\Net\Http\Routing\CtxKey::Result, $result);
+    return Context\withValue($ctx, CtxKey::Result, $result);
 }
 
 /**
