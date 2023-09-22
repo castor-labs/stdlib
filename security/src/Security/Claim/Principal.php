@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Castor\Security\Claim;
 
+use Castor\Security\Identity as IIdentity;
 use Castor\Security\Principal as IPrincipal;
 
 final class Principal implements IPrincipal
@@ -26,7 +27,7 @@ final class Principal implements IPrincipal
     private array $claims;
 
     public function __construct(
-        private readonly Identity $identity,
+        private readonly IIdentity $identity,
         string ...$claims
     ) {
         $this->claims = $claims;
@@ -42,7 +43,7 @@ final class Principal implements IPrincipal
         return \in_array($claim, $this->claims, true);
     }
 
-    public function getIdentity(): Identity
+    public function getIdentity(): IIdentity
     {
         return $this->identity;
     }
