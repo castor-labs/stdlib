@@ -23,9 +23,5 @@ use Castor\Security\Policy;
  */
 interface Authorizer
 {
-    /**
-     * @param Policy $policy
-     * @return bool
-     */
     public function isAuthorized(Policy $policy): bool;
 }

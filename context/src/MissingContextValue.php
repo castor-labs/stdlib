@@ -23,11 +23,11 @@ class MissingContextValue extends \LogicException
 {
     public static function forKey(mixed $key): MissingContextValue
     {
-        if (is_object($key)) {
-            $key = get_class($key);
+        if (\is_object($key)) {
+            $key = \get_class($key);
         }
 
-        if (!is_string($key)) {
+        if (!\is_string($key)) {
             $key = (string) $key;
         }
 

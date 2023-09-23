@@ -20,8 +20,8 @@ namespace Castor\Security;
 class Policy
 {
     /**
-     * @param Policy[]|array $andCan
-     * @param Policy[]|array $orCan
+     * @param array|Policy[] $andCan
+     * @param array|Policy[] $orCan
      */
     public function __construct(
         public array $andCan = [],
