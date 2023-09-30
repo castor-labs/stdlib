@@ -25,7 +25,9 @@ enum Version: string
 
     case HTTP11 = 'HTTP/1.1';
 
-    case HTTP20 = 'HTTP/2';
+    case HTTP2 = 'HTTP/2';
+
+    case HTTP20 = 'HTTP/2.0';
 
     public function major(): int
     {
