@@ -14,9 +14,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Castor\IDL;
+namespace Castor\IDL\API;
 
-#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION | \Attribute::TARGET_CLASS)]
-class Transactional
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
+class Listener
 {
+    public function __construct(
+        public readonly string $event
+    ) {
+    }
 }
