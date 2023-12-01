@@ -20,10 +20,10 @@ and functional APIs that are a breeze to use.
 
 ## Development Setup
 
-Copy the `castor.bin` to of your `$PATH` directories:
+Copy the `castor.bin` to one of your `$PATH` directories:
 
 ```
-sudo cp ./.castor/castor.bin /usr/local/bin/castor
+sudo cp ./.castor/castor.bin $HOME/.local/bin/castor
 ```
 
 Bootstrap the development environment (needs docker and compose plugin):
