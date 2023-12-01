@@ -16,11 +16,10 @@ declare(strict_types=1);
 
 namespace Castor\Uuid\V1;
 
+use Brick\DateTime\Clock;
 use Castor\Crypto\Bytes;
 use Castor\Crypto\Random;
 use Castor\Io\Reader;
-use Castor\Time\Clock;
-use Castor\Time\Clock\System;
 use Castor\Uuid\System\MacProvider;
 use Castor\Uuid\System\MacProvider\Fallback;
 use Castor\Uuid\System\MacProvider\FromOs;
@@ -47,7 +46,7 @@ final class Simplified implements State
     {
         if (null === self::$global) {
             self::$global = new Simplified(
-                System::global(),
+                new Clock\SystemClock(),
                 Random::global(),
                 new FromOs(new Fallback(Random::global())),
             );

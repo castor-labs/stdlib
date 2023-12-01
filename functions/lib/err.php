@@ -53,3 +53,25 @@ function collect(\Throwable $e): array
 
     return $errors;
 }
+
+/**
+ * Wraps a callable that will never fail.
+ *
+ * This is useful for catching exceptions that will never occur.
+ *
+ * @template T
+ *
+ * @param callable():T $fn
+ *
+ * @return T
+ *
+ * @throws \RuntimeException if an error is encountered
+ */
+function must(callable $fn): mixed
+{
+    try {
+        return $fn();
+    } catch (\Throwable $e) {
+        throw new \RuntimeException('Impossible error', previous: $e);
+    }
+}

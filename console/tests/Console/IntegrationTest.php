@@ -16,13 +16,14 @@ declare(strict_types=1);
 
 namespace Castor\Console;
 
+use Brick\DateTime\Clock;
+use Brick\DateTime\Instant;
+use Brick\DateTime\TimeZone;
 use Castor\Console;
 use Castor\Console\Command\Action;
 use Castor\Console\Command\Arg;
 use Castor\Console\Command\Flag;
 use Castor\Io;
-use Castor\Time\Clock;
-use Castor\Time\Clock\Frozen;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -91,7 +92,7 @@ class IntegrationTest extends TestCase
                     return 0;
                 }
 
-                $hour = (int) $clock->now()->format('H');
+                $hour = $clock->getTime()->atTimeZone(TimeZone::utc())->getHour();
 
                 $time = match (true) {
                     $hour < 12 => 'morning',
@@ -123,42 +124,42 @@ class IntegrationTest extends TestCase
                 '',
                 "No arguments in argument list\n",
                 [],
-                Frozen::at('H', '22'),
+                new Clock\FixedClock(Instant::of(1693432800)),
             ],
             'missing required argument' => [
                 1,
                 '',
                 "Argument 'name' is required\n",
                 ['greet'],
-                Frozen::at('H', '22'),
+                new Clock\FixedClock(Instant::of(1693432800)),
             ],
             'single argument' => [
                 0,
                 "Hello, Matias!\n",
                 '',
                 ['greet', 'Matias'],
-                Frozen::at('H', '22'),
+                new Clock\FixedClock(Instant::of(1693432800)),
             ],
             'too many arguments' => [
                 1,
                 '',
                 "Too many arguments\n",
                 ['greet', 'Matias', 'Navarro'],
-                Frozen::at('H', '22'),
+                new Clock\FixedClock(Instant::of(1693432800)),
             ],
             'time flag at front, morning' => [
                 0,
                 "Good morning, Matias!\n",
                 '',
                 ['greet', '-t', 'Matias'],
-                Frozen::at('H', '08'),
+                new Clock\FixedClock(Instant::of(1693382400)),
             ],
             'time flag at end, afternoon' => [
                 0,
                 "Good afternoon, Matias!\n",
                 '',
                 ['greet', 'Matias', '-t'],
-                Frozen::at('H', '15'),
+                new Clock\FixedClock(Instant::of(1693407600)),
             ],
             'prints help' => [
                 0,
@@ -176,7 +177,7 @@ class IntegrationTest extends TestCase
                 EOT,
                 '',
                 ['greet', '-h'],
-                Frozen::at('H', '22'),
+                new Clock\FixedClock(Instant::of(1693432800)),
             ],
         ];
     }

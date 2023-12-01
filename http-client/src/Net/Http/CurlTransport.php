@@ -225,7 +225,7 @@ final class CurlTransport implements Transport
         return match ($request->version) {
             Version::HTTP10 => CURL_HTTP_VERSION_1_0,
             Version::HTTP11 => CURL_HTTP_VERSION_1_1,
-            Version::HTTP20 => CURL_HTTP_VERSION_2_0
+            Version::HTTP20, Version::HTTP2 => CURL_HTTP_VERSION_2_0
         };
     }
 

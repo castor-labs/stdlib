@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Castor\Uuid;
 
+use Brick\Math\BigInteger;
+use Brick\Math\Exception\MathException;
 use Castor\Crypto\Bytes;
 use Castor\Encoding\InputError;
 use Castor\Uuid\V1\GregorianTime;
@@ -30,11 +32,12 @@ class V1Test extends TestCase
 {
     /**
      * @throws InputError
+     * @throws MathException
      */
     public function testGenerate(): void
     {
         $state = new V1\Fixed(
-            GregorianTime::fromTimestamp('139127190012012330'),
+            GregorianTime::fromTimestamp(BigInteger::of('139127190012012330')),
             Bytes::fromHex('0001'),
             Bytes::fromHex('00b0d063c226')
         );
@@ -42,8 +45,8 @@ class V1Test extends TestCase
         $v1 = V1::generate($state);
         $this->assertSame('3343a72a-4771-11ee-8001-00b0d063c226', $v1->toString());
 
-        $this->assertSame('139127190012012330', $v1->getTime()->getTimestamp());
-        $this->assertSame('2023-08-30T20:10:01+00:00', $v1->getTime()->getDatetime()->format(DATE_ATOM));
+        $this->assertSame('139127190012012330', (string) $v1->getTime()->getTimestamp());
+        $this->assertSame('2023-08-30T20:10:01.201233Z', $v1->getTime()->getInstant()->toISOString());
         $this->assertSame('00b0d063c226', $v1->getNode()->toHex());
         $this->assertSame('0001', $v1->getClockSeq()->toHex());
     }
@@ -61,7 +64,7 @@ class V1Test extends TestCase
 
         $v1 = V1::generate($state);
         $this->assertSame('395c14c4-4782-11ee-97ae-0242ac1b0004', $v1->toString());
-        $this->assertSame('2023-08-30', $v1->getTime()->getDatetime()->format('Y-m-d'));
+        $this->assertSame('2023-08-30T22:11:52.872058Z', $v1->getTime()->getInstant()->toISOString());
     }
 
     public function testMultipleGeneration(): void

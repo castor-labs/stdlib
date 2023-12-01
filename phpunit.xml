@@ -21,7 +21,6 @@
             <directory>log/tests</directory>
             <directory>os/tests</directory>
             <directory>random/tests</directory>
-            <directory>time/tests</directory>
             <directory>uri/tests</directory>
             <directory>uuid/tests</directory>
         </testsuite>
@@ -41,7 +40,6 @@
             <directory suffix=".php">log/src</directory>
             <directory suffix=".php">os/src</directory>
             <directory suffix=".php">random/src</directory>
-            <directory suffix=".php">time/src</directory>
             <directory suffix=".php">uri/src</directory>
             <directory suffix=".php">uuid/src</directory>
         </include>

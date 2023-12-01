@@ -16,38 +16,28 @@ declare(strict_types=1);
 
 namespace Castor\Uuid\V1;
 
-use Castor\Time\Clock\Frozen;
-use Castor\Time\Clock\Monotonic;
-use Castor\Time\Clock\System;
+use Brick\DateTime\Clock\FixedClock;
+use Brick\DateTime\Instant;
+use Brick\Math\BigInteger;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  *
- * @coversNothing
+ * @covers \Castor\Uuid\V1\GregorianTime
  */
 class GregorianTimeTest extends TestCase
 {
     public function testGregorianTime(): void
     {
-        $time = GregorianTime::now(Frozen::at(DATE_ATOM, '2023-08-30T18:24:26+00:00'));
-        $this->assertSame('139127126660000000', $time->getTimestamp());
+        $time = GregorianTime::now(new FixedClock(Instant::of(1693426201, 201233)));
+        $this->assertSame('139127190010002012', (string) $time->getTimestamp());
     }
 
     public function testGregorianDatetime(): void
     {
-        $time = GregorianTime::fromTimestamp('139127190012012330')->getDatetime();
-        $this->assertSame('1693426201.201233', $time->format('U.u'));
-    }
-
-    public function testGregorianTimeWithTwoClocks(): void
-    {
-        $system = GregorianTime::now(System::global());
-        $monotonic = GregorianTime::now(Monotonic::global());
-
-        $this->assertNotSame(
-            $system->getTimestamp(),
-            $monotonic->getTimestamp()
-        );
+        $instant = GregorianTime::fromTimestamp(BigInteger::of('139127190010002012'))->getInstant();
+        $this->assertSame(1693426201, $instant->getEpochSecond());
+        $this->assertSame(201200, $instant->getNano()); // Nano precision is lost because of 100 nano intervals
     }
 }

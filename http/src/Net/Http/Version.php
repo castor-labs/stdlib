@@ -33,7 +33,7 @@ enum Version: string
     {
         return match ($this) {
             self::HTTP10, self::HTTP11 => 1,
-            self::HTTP20 => 2,
+            self::HTTP20, self::HTTP2 => 2,
         };
     }
 
@@ -41,7 +41,7 @@ enum Version: string
     {
         return match ($this) {
             self::HTTP11 => 1,
-            self::HTTP10, self::HTTP20 => 0,
+            self::HTTP10, self::HTTP20, self::HTTP2 => 0,
         };
     }
 
@@ -50,7 +50,7 @@ enum Version: string
         return match ($this) {
             self::HTTP10 => 1.0,
             self::HTTP11 => 1.1,
-            self::HTTP20 => 2.0
+            self::HTTP20, self::HTTP2 => 2.0
         };
     }
 }

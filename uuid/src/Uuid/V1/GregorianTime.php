@@ -16,9 +16,13 @@ declare(strict_types=1);
 
 namespace Castor\Uuid\V1;
 
+use Brick\DateTime\Clock;
+use Brick\DateTime\Instant;
+use Brick\Math\BigInteger;
+use Brick\Math\RoundingMode;
 use Castor\Crypto\Bytes;
-use Castor\Encoding\InputError;
-use Castor\Time\Clock;
+
+use function Castor\Err\must;
 
 class GregorianTime
 {
@@ -26,76 +30,65 @@ class GregorianTime
      * The number of 100-nanosecond intervals from the Gregorian calendar epoch
      * to the Unix epoch.
      */
-    private const GREGORIAN_TO_UNIX_INTERVALS = '122192928000000000';
+    private const GREGORIAN_TO_UNIX_OFFSET = '122192928000000000';
 
     /**
      * The number of 100-nanosecond intervals in one second.
      */
     private const SECOND_INTERVALS = '10000000';
 
-    /**
-     * The number of 100-nanosecond intervals in one microsecond.
-     */
-    private const MICROSECOND_INTERVALS = '10';
-
     public function __construct(
         public readonly Bytes $bytes,
     ) {
     }
 
-    /**
-     * @throws InputError
-     */
-    public static function fromTimestamp(string $timestamp): GregorianTime
+    public static function fromTimestamp(BigInteger $timestamp): GregorianTime
     {
-        $hex = \str_pad(\base_convert($timestamp, 10, 16), 16, '0', STR_PAD_LEFT);
+        return must(static function () use ($timestamp) {
+            $hex = \str_pad($timestamp->toBase(16), 16, '0', STR_PAD_LEFT);
 
-        return new self(Bytes::fromHex($hex));
+            return new self(Bytes::fromHex($hex));
+        });
     }
 
-    /**
-     * @noinspection PhpUnhandledExceptionInspection
-     */
-    public static function fromDatetime(\DateTimeImmutable $datetime): GregorianTime
+    public static function fromInstant(Instant $instant): GregorianTime
     {
-        $seconds = $datetime->format('U');
-        $microseconds = $datetime->format('u');
+        return must(function () use ($instant) {
+            $epochSeconds = BigInteger::of($instant->getEpochSecond());
+            $nanoSeconds = BigInteger::of($instant->getNano());
 
-        $nano1 = \bcmul($seconds, self::SECOND_INTERVALS, 0);
-        $nano2 = \bcmul($microseconds, self::MICROSECOND_INTERVALS, 0);
+            $secondsTicks = $epochSeconds->multipliedBy(self::SECOND_INTERVALS);
+            $nanoTicks = $nanoSeconds->dividedBy(100, RoundingMode::DOWN);
+            $ticksSinceEpoch = $secondsTicks->plus($nanoTicks);
 
-        $sum = \bcadd($nano1, $nano2, 0); // Combine both 100-nano second intervals
-        $timestamp = \bcadd($sum, self::GREGORIAN_TO_UNIX_INTERVALS, 0); // Add the gregorian count
-
-        return self::fromTimestamp($timestamp);
+            return self::fromTimestamp($ticksSinceEpoch->plus(self::GREGORIAN_TO_UNIX_OFFSET));
+        });
     }
 
     public static function now(Clock $clock): GregorianTime
     {
-        return self::fromDatetime($clock->now());
+        return self::fromInstant($clock->getTime());
     }
 
-    public function getDatetime(): \DateTimeImmutable
+    public function getInstant(): Instant
     {
-        $epocNanoseconds = \bcsub($this->getTimestamp(), self::GREGORIAN_TO_UNIX_INTERVALS, 0); // Subtract gregorian count
-        $seconds = \bcdiv($epocNanoseconds, self::SECOND_INTERVALS, 6);
-        if (!\str_contains($seconds, '.')) {
-            $seconds .= '.0';
-        }
+        return must(function () {
+            $ticksSinceEpoch = $this->getTimestamp()->minus(self::GREGORIAN_TO_UNIX_OFFSET); // Subtract gregorian offset
 
-        $datetime = \DateTimeImmutable::createFromFormat('U.u', $seconds);
-        if (!$datetime instanceof \DateTimeImmutable) {
-            throw new \RuntimeException('This error should never happen');
-        }
+            $epochSeconds = $ticksSinceEpoch->dividedBy(self::SECOND_INTERVALS, RoundingMode::DOWN);
+            $nanoSeconds = $ticksSinceEpoch->remainder(self::SECOND_INTERVALS)->multipliedBy(100);
 
-        return $datetime;
+            return Instant::of($epochSeconds->toInt(), $nanoSeconds->toInt());
+        });
     }
 
     /**
      * Returns the number of 100 nanosecond intervals since 1582-10-15 00:00:00 UTC as a numeric string.
      */
-    public function getTimestamp(): string
+    public function getTimestamp(): BigInteger
     {
-        return \base_convert($this->bytes->toHex(), 16, 10);
+        return must(function () {
+            return BigInteger::fromBase($this->bytes->toHex(), 16);
+        });
     }
 }

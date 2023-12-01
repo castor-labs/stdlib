@@ -15,7 +15,8 @@
     "ext-bcmath": "*",
     "castor/io": "*",
     "castor/random": "*",
-    "castor/time": "*"
+    "castor/time": "*",
+    "brick/date-time": "^0.5"
   },
   "require-dev": {
     "castor/dbal": "*"

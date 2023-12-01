@@ -18,7 +18,6 @@
         <directory name="log/src" />
         <directory name="os/src" />
         <directory name="random/src" />
-        <directory name="time/src" />
         <directory name="uri/src" />
         <directory name="uuid/src" />
         <ignoreFiles>
