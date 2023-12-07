@@ -51,6 +51,11 @@ class Query implements \IteratorAggregate
     public static function decode(string $rawQuery): Query
     {
         $query = new self();
+
+        if ('' === $rawQuery) {
+            return $query;
+        }
+
         $parts = \explode('&', $rawQuery);
         foreach ($parts as $part) {
             $i = \strpos($part, '=');
